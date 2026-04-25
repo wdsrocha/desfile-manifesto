@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans;
+  }
+
+  ::selection {
+    @apply bg-ink text-cream;
+  }
+}
+
+@layer utilities {
+  .editorial-eyebrow {
+    @apply text-[11px] uppercase tracking-editorial text-ink/60;
+  }
+}
