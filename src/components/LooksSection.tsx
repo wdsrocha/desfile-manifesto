@@ -44,7 +44,7 @@ export function LooksSection() {
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="text-[11px] text-ink/50 truncate max-w-[60%] text-right">
-                      {look.creditos.modelo}
+                      {look.modelo?.nome ?? ""}
                     </span>
                   </div>
                 </button>

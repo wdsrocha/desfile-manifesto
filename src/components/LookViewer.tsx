@@ -89,26 +89,37 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
                 </h3>
               </div>
 
-              <dl className="flex flex-col gap-5 text-sm sm:text-base">
-                <div>
-                  <dt className="editorial-eyebrow mb-1">Peça / Marca</dt>
-                  <dd className="text-ink leading-snug">
-                    {look.creditos.marca}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="editorial-eyebrow mb-1">Styling</dt>
-                  <dd className="text-ink leading-snug">
-                    {look.creditos.styling}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="editorial-eyebrow mb-1">Modelo</dt>
-                  <dd className="text-ink leading-snug">
-                    {look.creditos.modelo}
-                  </dd>
-                </div>
-              </dl>
+              <div className="flex flex-col gap-5 text-sm sm:text-base">
+                {look.modelo && (
+                  <div>
+                    <div className="editorial-eyebrow mb-1">Modelo</div>
+                    <div className="text-ink leading-snug">
+                      {look.modelo.nome}
+                    </div>
+                    {look.modelo.instagram && (
+                      <a
+                        href={`https://instagram.com/${look.modelo.instagram.replace(/^@/, "")}`}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="mt-0.5 inline-block text-[13px] text-ink/60 hover:text-ink transition-colors"
+                      >
+                        {look.modelo.instagram}
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {look.styling && look.styling.length > 0 && (
+                  <div>
+                    <div className="editorial-eyebrow mb-1">Styling</div>
+                    <ul className="flex flex-col gap-1 text-ink leading-snug">
+                      {look.styling.map((line, i) => (
+                        <li key={i}>{line}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

@@ -13,15 +13,15 @@ export interface MarcaOuCriativo extends Pessoa {
   segmento: string;
 }
 
-export interface LookCreditos {
-  marca: string;
-  styling: string;
-  modelo: string;
+export interface LookModelo {
+  nome: string;
+  instagram?: string;
 }
 
 export interface Look {
   id: string;
-  creditos: LookCreditos;
+  modelo?: LookModelo;
+  styling?: string[];
 }
 
 export interface DesfileFollowUp {
@@ -73,12 +73,7 @@ export const proximoDesfile: DesfileFollowUp = {
   local: "Aracruz, ES",
 };
 
-export const looks: Look[] = [
-  {
-    id: "01",
-    creditos: { marca: "", styling: "", modelo: "" },
-  },
-];
+export const looks: Look[] = [{ id: "01" }];
 
 export const marcasECriativos: MarcaOuCriativo[] = [
   {
