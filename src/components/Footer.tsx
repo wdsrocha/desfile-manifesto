@@ -1,4 +1,5 @@
 import { evento } from "@/lib/data";
+import { instagramUrl } from "@/lib/instagram";
 
 export function Footer() {
   return (
@@ -13,6 +14,17 @@ export function Footer() {
           <span aria-hidden>·</span>
           <span>{evento.local}</span>
         </div>
+        <p className="mt-8 text-[11px] text-cream/30">
+          feito com ♥ por{" "}
+          <a
+            href={instagramUrl("@sharp.freestyle")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-cream/60 transition-colors"
+          >
+            @sharp.freestyle
+          </a>
+        </p>
       </div>
     </footer>
   );
