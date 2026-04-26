@@ -22,8 +22,13 @@ export function Hero() {
             </span>
           </div>
 
+          {/* TODO: replace <br /> with CSS word-break/overflow-wrap to avoid hardcoded line breaks hurting SEO */}
           <h1 className="font-serif font-light text-[clamp(3rem,12vw,8.5rem)] leading-[0.92] tracking-tight">
-            {evento.nome}
+            Desfile
+            <br />
+            Manifesto
+            <br />
+            Amazonense
             <span className="text-cream/40">.</span>
           </h1>
 
