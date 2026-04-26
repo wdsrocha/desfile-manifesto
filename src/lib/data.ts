@@ -21,7 +21,6 @@ export interface LookCreditos {
 
 export interface Look {
   id: string;
-  imagemUrl: string;
   title: string;
   creditos: LookCreditos;
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { looks, type Look } from "@/lib/data";
+import { lookImageUrl } from "@/lib/looks";
 import { SectionHeader } from "./SectionHeader";
 import { LookImage } from "./LookImage";
 import { LookViewer } from "./LookViewer";
@@ -32,7 +33,7 @@ export function LooksSection() {
                   aria-label={`Abrir ${look.title}`}
                 >
                   <LookImage
-                    src={look.imagemUrl}
+                    src={lookImageUrl(look.id)}
                     alt={look.title}
                     sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                     priority={i < 4}

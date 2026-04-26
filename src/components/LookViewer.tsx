@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import type { Look } from "@/lib/data";
+import { lookImageUrl } from "@/lib/looks";
 import { LookImage } from "./LookImage";
 
 interface LookViewerProps {
@@ -73,7 +74,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
         {look && (
           <div className="grid grid-cols-1 sm:grid-cols-[1.2fr_1fr] max-h-[92vh] sm:max-h-[90vh] overflow-y-auto">
             <LookImage
-              src={look.imagemUrl}
+              src={lookImageUrl(look.id)}
               alt={look.title}
               priority
               sizes="(min-width: 640px) 55vw, 100vw"
