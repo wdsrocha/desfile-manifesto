@@ -1,5 +1,5 @@
 interface SectionHeaderProps {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description?: string;
   align?: "left" | "center";
@@ -15,7 +15,7 @@ export function SectionHeader({
     align === "center" ? "items-center text-center" : "items-start text-left";
   return (
     <div className={`flex flex-col gap-3 ${alignment}`}>
-      <span className="editorial-eyebrow">{eyebrow}</span>
+      {eyebrow && <span className="editorial-eyebrow">{eyebrow}</span>}
       <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl leading-[1.05] text-ink">
         {title}
       </h2>

@@ -10,7 +10,6 @@ export function CreditsSection() {
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHeader
-          eyebrow="Seção 06"
           title="Quem faz acontecer"
           description="Equipe, elenco e apoiadores que sustentam o Manifesto."
         />

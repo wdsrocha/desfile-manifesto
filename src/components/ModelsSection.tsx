@@ -10,7 +10,6 @@ export function ModelsSection() {
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHeader
-          eyebrow="Seção 04"
           title="Modelos"
           description="O elenco que carrega o manifesto."
         />

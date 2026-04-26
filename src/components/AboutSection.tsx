@@ -12,7 +12,6 @@ export function AboutSection() {
       <div className="mx-auto max-w-6xl px-5 sm:px-8 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
         <div className="md:col-span-7">
           <SectionHeader
-            eyebrow="Seção 02"
             title="Sobre o evento"
             description={evento.descricaoLonga}
           />

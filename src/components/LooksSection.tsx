@@ -15,11 +15,7 @@ export function LooksSection() {
       className="bg-cream text-ink py-16 sm:py-24 md:py-32"
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <SectionHeader
-          eyebrow="Seção 01"
-          title="Looks da passarela"
-          description="A passarela look a look. Galeria publicada após o desfile."
-        />
+        <SectionHeader title="Looks da passarela" />
 
         {looks.length === 0 ? (
           <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
