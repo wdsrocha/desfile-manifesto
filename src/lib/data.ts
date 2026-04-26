@@ -75,7 +75,7 @@ export const evento: EventoInfo = {
   conceito:
     "A pluralidade do vestir amazonense — indígena, afro e urbana — em uma só passarela.",
   descricaoLonga:
-    "Aprovado em edital do Ministério da Cultura, o Manifesto representa a moda amazonense na 6ª Teia de Cultura Nacional, em Aracruz (ES), de 19 a 24 de maio. Antes da viagem, a estreia acontece em casa: 26 de abril, na Faixa Liberada da Av. Getúlio Vargas, dentro da programação da Semana Fashion Revolution.",
+    "A estreia é em Manaus, no dia 26 de abril, na Faixa Liberada da Av. Getúlio Vargas, dentro da programação da Semana Fashion Revolution. Aprovado em edital do Ministério da Cultura, entre 19 e 24 de maio o Manifesto segue para Aracruz (ES), levando a moda amazonense para a 6ª Teia de Cultura Nacional.",
 };
 
 export const looks: Look[] = [];
