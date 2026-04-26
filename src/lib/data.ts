@@ -73,7 +73,12 @@ export const proximoDesfile: DesfileFollowUp = {
   local: "Aracruz, ES",
 };
 
-export const looks: Look[] = [];
+export const looks: Look[] = [
+  {
+    id: "01",
+    creditos: { marca: "", styling: "", modelo: "" },
+  },
+];
 
 export const marcasECriativos: MarcaOuCriativo[] = [
   {
