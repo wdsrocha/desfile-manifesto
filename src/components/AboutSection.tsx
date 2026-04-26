@@ -1,4 +1,4 @@
-import { evento, produtoraExecutiva } from "@/lib/data";
+import { evento, produtoraExecutiva, proximoDesfile } from "@/lib/data";
 import { instagramUrl } from "@/lib/instagram";
 import { SectionHeader } from "./SectionHeader";
 
@@ -36,6 +36,24 @@ export function AboutSection() {
               <dd>{evento.local}</dd>
             </div>
           </dl>
+
+          <div className="mt-10 pt-8 border-t border-ink/10">
+            <span className="editorial-eyebrow">Próximo desfile</span>
+            <dl className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
+              <div>
+                <dt className="editorial-eyebrow mb-1">Edição</dt>
+                <dd>{proximoDesfile.edicao}</dd>
+              </div>
+              <div>
+                <dt className="editorial-eyebrow mb-1">Data</dt>
+                <dd>{proximoDesfile.data}</dd>
+              </div>
+              <div>
+                <dt className="editorial-eyebrow mb-1">Local</dt>
+                <dd>{proximoDesfile.local}</dd>
+              </div>
+            </dl>
+          </div>
         </div>
 
         <aside className="md:col-span-5 md:pl-8 md:border-l md:border-ink/10">

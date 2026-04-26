@@ -42,6 +42,12 @@ export interface Look {
   creditos: LookCreditos;
 }
 
+export interface DesfileFollowUp {
+  edicao: string;
+  data: string;
+  local: string;
+}
+
 export interface CreditoPessoa {
   nome?: string;
   instagram?: string;
@@ -77,6 +83,12 @@ export const evento: EventoInfo = {
     "Manaus veste muitas histórias ao mesmo tempo — indígena, afro e urbana — e raramente as coloca lado a lado. O Manifesto é um gesto coletivo para juntar essa pluralidade na mesma passarela, dentro da Semana Fashion Revolution, semana em que o mundo se pergunta quem faz a moda que vestimos.",
   descricaoLonga:
     "A estreia é em Manaus, no dia 26 de abril, na Faixa Liberada da Av. Getúlio Vargas, dentro da programação da Semana Fashion Revolution. Aprovado em edital do Ministério da Cultura, entre 19 e 24 de maio o Manifesto segue para Aracruz (ES), levando a moda amazonense para a 6ª Teia de Cultura Nacional.",
+};
+
+export const proximoDesfile: DesfileFollowUp = {
+  edicao: "6ª Teia de Cultura Nacional",
+  data: "Entre 19 e 24 de maio",
+  local: "Aracruz, ES",
 };
 
 export const looks: Look[] = [];
