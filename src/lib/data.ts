@@ -1,5 +1,3 @@
-import looksJson from "@/data/looks.json";
-
 export type Papel = "Marca / Estilista" | "Modelo" | "Produção Executiva";
 
 export interface Pessoa {
@@ -75,7 +73,7 @@ export const proximoDesfile: DesfileFollowUp = {
   local: "Aracruz, ES",
 };
 
-export const looks: Look[] = looksJson;
+export const looks: Look[] = [];
 
 export const marcasECriativos: MarcaOuCriativo[] = [
   {

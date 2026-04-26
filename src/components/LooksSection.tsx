@@ -19,9 +19,30 @@ export function LooksSection() {
         <SectionHeader title="Looks da passarela" />
 
         {looks.length === 0 ? (
-          <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
-            Atualizaremos a galeria após o desfile.
-          </p>
+          <div className="mt-10 sm:mt-14 max-w-md text-ink/70 text-sm sm:text-base flex flex-col gap-3 leading-relaxed">
+            <p>Atualizaremos a galeria após o desfile.</p>
+            <p>
+              Enquanto isso, acompanhe atualizações no Instagram{" "}
+              <a
+                href="https://instagram.com/gliciacauper"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-ink underline underline-offset-2 decoration-ink/30 hover:decoration-ink transition-colors"
+              >
+                @gliciacauper
+              </a>
+              . Alguns looks com marcas e modelos já estão{" "}
+              <a
+                href="https://canva.link/desfile-manifesto-amazonense"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="text-ink underline underline-offset-2 decoration-ink/30 hover:decoration-ink transition-colors"
+              >
+                neste link
+              </a>
+              .
+            </p>
+          </div>
         ) : (
           <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {looks.map((look, i) => (
