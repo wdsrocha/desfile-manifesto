@@ -38,7 +38,7 @@ export function Hero() {
 
           <nav
             aria-label="Seções principais"
-            className="flex flex-wrap gap-x-5 gap-y-2 pt-2 text-[11px] uppercase tracking-editorial"
+            className="flex flex-col sm:flex-row sm:flex-wrap gap-y-3 sm:gap-x-6 sm:gap-y-2 pt-2 text-[11px] uppercase tracking-editorial"
           >
             <a
               href="#sobre"
