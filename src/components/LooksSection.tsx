@@ -19,7 +19,7 @@ export function LooksSection() {
 
         {looks.length === 0 ? (
           <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
-            Galeria em construção. Atualizaremos em breve com cada passagem.
+            Atualizaremos a galeria após o desfile.
           </p>
         ) : (
           <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
