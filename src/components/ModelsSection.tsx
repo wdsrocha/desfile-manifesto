@@ -3,6 +3,8 @@ import { SectionHeader } from "./SectionHeader";
 import { PortraitCard } from "./PortraitCard";
 
 export function ModelsSection() {
+  if (modelos.length === 0) return null;
+
   return (
     <section
       id="modelos"
@@ -14,20 +16,13 @@ export function ModelsSection() {
           description="O elenco que carrega o manifesto."
         />
 
-        {modelos.length === 0 ? (
-          <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
-            Elenco completo em breve. Atualizaremos por aqui assim que cada
-            modelo confirmar.
-          </p>
-        ) : (
-          <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {modelos.map((m, i) => (
-              <li key={m.id}>
-                <PortraitCard pessoa={m} priority={i < 4} />
-              </li>
-            ))}
-          </ul>
-        )}
+        <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          {modelos.map((m, i) => (
+            <li key={m.id}>
+              <PortraitCard pessoa={m} priority={i < 4} />
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
