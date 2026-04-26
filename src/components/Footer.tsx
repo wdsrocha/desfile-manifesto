@@ -33,7 +33,7 @@ export function Footer() {
 
       <div className="mt-10 pt-6 border-t border-cream/10 mx-auto max-w-6xl px-5 sm:px-8 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-[11px] uppercase tracking-editorial text-cream/45">
         <span>© {new Date().getFullYear()} Manifesto</span>
-        <span>{evento.local} — {evento.enderecoCurto}</span>
+        <span>{evento.local}</span>
       </div>
     </footer>
   );
