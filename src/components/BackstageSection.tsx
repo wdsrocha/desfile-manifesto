@@ -12,16 +12,23 @@ export function BackstageSection() {
         <SectionHeader
           eyebrow="Seção 05"
           title="Backstage & produção"
-          description="Quem segura a noite por trás da passarela. Direção de arte, beleza, luz, som, fotografia e produção executiva."
+          description="Quem segura a noite por trás da passarela."
         />
 
-        <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {equipeProducao.map((p, i) => (
-            <li key={p.id}>
-              <PortraitCard pessoa={p} showRole priority={i < 4} />
-            </li>
-          ))}
-        </ul>
+        {equipeProducao.length === 0 ? (
+          <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
+            Equipe completa em breve. Atualizaremos com cada profissional
+            confirmado.
+          </p>
+        ) : (
+          <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {equipeProducao.map((p, i) => (
+              <li key={p.id}>
+                <PortraitCard pessoa={p} showRole priority={i < 4} />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   );

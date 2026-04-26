@@ -18,37 +18,43 @@ export function LooksSection() {
         <SectionHeader
           eyebrow="Seção 01"
           title="Looks da passarela"
-          description="Dezenove passagens. Cada peça é uma frase do manifesto. Toque em um look para ver os créditos completos."
+          description="A passarela look a look. Galeria publicada após o desfile."
         />
 
-        <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-          {looks.map((look, i) => (
-            <li key={look.id}>
-              <button
-                type="button"
-                onClick={() => setActive(look)}
-                className="group block w-full text-left"
-                aria-label={`Abrir ${look.title}`}
-              >
-                <LookImage
-                  src={look.imagemUrl}
-                  alt={look.title}
-                  sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
-                  priority={i < 4}
-                  className="aspect-[3/4] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                />
-                <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
-                  <span className="editorial-eyebrow">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className="text-[11px] text-ink/50 truncate max-w-[60%] text-right">
-                    {look.creditos.modelo}
-                  </span>
-                </div>
-              </button>
-            </li>
-          ))}
-        </ul>
+        {looks.length === 0 ? (
+          <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
+            Galeria em construção. Atualizaremos em breve com cada passagem.
+          </p>
+        ) : (
+          <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+            {looks.map((look, i) => (
+              <li key={look.id}>
+                <button
+                  type="button"
+                  onClick={() => setActive(look)}
+                  className="group block w-full text-left"
+                  aria-label={`Abrir ${look.title}`}
+                >
+                  <LookImage
+                    src={look.imagemUrl}
+                    alt={look.title}
+                    sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
+                    priority={i < 4}
+                    className="aspect-[3/4] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                  />
+                  <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
+                    <span className="editorial-eyebrow">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[11px] text-ink/50 truncate max-w-[60%] text-right">
+                      {look.creditos.modelo}
+                    </span>
+                  </div>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <LookViewer look={active} onClose={() => setActive(null)} />

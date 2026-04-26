@@ -12,16 +12,23 @@ export function ModelsSection() {
         <SectionHeader
           eyebrow="Seção 04"
           title="Modelos"
-          description="Os corpos que carregam o manifesto. Toque em um retrato para abrir o Instagram."
+          description="O elenco que carrega o manifesto."
         />
 
-        <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {modelos.map((m, i) => (
-            <li key={m.id}>
-              <PortraitCard pessoa={m} priority={i < 4} />
-            </li>
-          ))}
-        </ul>
+        {modelos.length === 0 ? (
+          <p className="mt-10 sm:mt-14 max-w-md text-ink/60 text-sm sm:text-base">
+            Elenco completo em breve. Atualizaremos por aqui assim que cada
+            modelo confirmar.
+          </p>
+        ) : (
+          <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {modelos.map((m, i) => (
+              <li key={m.id}>
+                <PortraitCard pessoa={m} priority={i < 4} />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </section>
   );
