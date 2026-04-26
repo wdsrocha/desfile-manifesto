@@ -324,13 +324,6 @@ export const creditos: CreditoGrupo[] = [
     ],
   },
   {
-    titulo: "Fotógrafos",
-    pessoas: [
-      { instagram: "@cavalcantte" },
-      { instagram: "@henrifotografo" },
-    ],
-  },
-  {
     titulo: "Equipe voluntária",
     pessoas: [
       { instagram: "@eumayaalves" },
@@ -341,6 +334,13 @@ export const creditos: CreditoGrupo[] = [
       { instagram: "@holandapaulo" },
       { instagram: "@sharp.freestyle" },
       { nome: "Daina Viana" },
+    ],
+  },
+  {
+    titulo: "Fotógrafos",
+    pessoas: [
+      { instagram: "@cavalcantte" },
+      { instagram: "@henrifotografo" },
     ],
   },
   {
