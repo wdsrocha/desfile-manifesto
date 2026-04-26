@@ -4,6 +4,7 @@ import { AboutSection } from "@/components/AboutSection";
 import { BrandsSection } from "@/components/BrandsSection";
 import { ModelsSection } from "@/components/ModelsSection";
 import { BackstageSection } from "@/components/BackstageSection";
+import { CreditsSection } from "@/components/CreditsSection";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <BrandsSection />
         <ModelsSection />
         <BackstageSection />
+        <CreditsSection />
       </main>
       <Footer />
     </>
