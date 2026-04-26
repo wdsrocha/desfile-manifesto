@@ -62,7 +62,7 @@ export const evento: EventoInfo = {
   dataISO: "2026-04-26",
   local: "Manaus, AM",
   conceito:
-    "A pluralidade do vestir amazonense — indígena, afro e urbana — em uma só passarela.",
+    "Um desfile-manifesto da moda autoral amazonense, aberto e na rua.",
   intro:
     "Manaus veste muitas histórias ao mesmo tempo — indígena, afro e urbana — e raramente as coloca lado a lado. O Manifesto é um gesto coletivo para juntar essa pluralidade na mesma passarela, dentro da Semana Fashion Revolution, semana em que o mundo se pergunta quem faz a moda que vestimos.",
   descricaoLonga:
