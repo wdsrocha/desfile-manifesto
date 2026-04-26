@@ -30,14 +30,14 @@ export function LooksSection() {
                   type="button"
                   onClick={() => setActive(look)}
                   className="group block w-full text-left"
-                  aria-label={`Abrir ${look.title}`}
+                  aria-label={`Abrir look ${look.id}`}
                 >
                   <LookImage
                     src={lookImageUrl(look.id)}
-                    alt={look.title}
+                    alt={`Look ${look.id}`}
                     sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                     priority={i < 4}
-                    className="aspect-[3/4] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    className="aspect-[9/16] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                   />
                   <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
                     <span className="editorial-eyebrow">

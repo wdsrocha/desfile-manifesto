@@ -49,7 +49,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
           absolute left-0 right-0 bottom-0 max-h-[92vh]
           sm:left-1/2 sm:right-auto sm:bottom-auto sm:top-1/2
           sm:-translate-x-1/2 sm:-translate-y-1/2
-          sm:max-h-[90vh] sm:w-[min(960px,92vw)]
+          sm:max-h-[88vh] sm:w-auto sm:max-w-[min(880px,94vw)]
           bg-cream text-ink shadow-2xl
           rounded-t-2xl sm:rounded-2xl
           overflow-hidden
@@ -72,20 +72,20 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
         </div>
 
         {look && (
-          <div className="grid grid-cols-1 sm:grid-cols-[1.2fr_1fr] max-h-[92vh] sm:max-h-[90vh] overflow-y-auto">
+          <div className="flex flex-col sm:flex-row max-h-[92vh] sm:max-h-[88vh] overflow-y-auto sm:overflow-visible">
             <LookImage
               src={lookImageUrl(look.id)}
-              alt={look.title}
+              alt={`Look ${look.id}`}
               priority
-              sizes="(min-width: 640px) 55vw, 100vw"
-              className="aspect-[3/4] sm:aspect-auto sm:h-full"
+              sizes="(min-width: 640px) 50vh, 100vw"
+              className="aspect-[9/16] w-full sm:w-auto sm:h-[88vh] sm:flex-shrink-0"
             />
 
-            <div className="p-6 sm:p-8 md:p-10 flex flex-col gap-6">
+            <div className="p-6 sm:p-8 md:p-10 flex flex-col gap-6 sm:w-[min(360px,42vw)] sm:max-h-[88vh] sm:overflow-y-auto">
               <div className="flex flex-col gap-2">
                 <span className="editorial-eyebrow">Look</span>
                 <h3 className="font-serif text-2xl sm:text-3xl leading-tight">
-                  {look.title}
+                  {look.id}
                 </h3>
               </div>
 
