@@ -46,15 +46,17 @@ export function AboutSection() {
           <span className="editorial-eyebrow">Produção executiva</span>
 
           <div className="mt-5 flex items-center gap-4">
-            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-gradient-to-br from-ink/[0.08] to-ink/[0.16] shrink-0">
-              <img
-                src={produtoraExecutiva.imagemUrl}
-                alt={produtoraExecutiva.nomeCompleto}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
-              />
-            </div>
+            {produtoraExecutiva.imagemUrl && (
+              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-gradient-to-br from-ink/[0.08] to-ink/[0.16] shrink-0">
+                <img
+                  src={produtoraExecutiva.imagemUrl}
+                  alt={produtoraExecutiva.nomeCompleto}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )}
             <div>
               <p className="font-serif text-2xl sm:text-3xl leading-tight">
                 {produtoraExecutiva.nomeCompleto}
