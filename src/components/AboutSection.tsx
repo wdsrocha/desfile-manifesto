@@ -33,11 +33,7 @@ export function AboutSection() {
             </div>
             <div>
               <dt className="editorial-eyebrow mb-1">Local</dt>
-              <dd>
-                {evento.local}
-                <br />
-                <span className="text-ink/60">{evento.endereco}</span>
-              </dd>
+              <dd>{evento.local}</dd>
             </div>
           </dl>
         </div>

@@ -59,7 +59,6 @@ export interface EventoInfo {
   dataPtBr: string;
   dataISO: string;
   local: string;
-  endereco: string;
   conceito: string;
   intro: string;
   descricaoLonga: string;
@@ -72,7 +71,6 @@ export const evento: EventoInfo = {
   dataPtBr: "26/04/2026",
   dataISO: "2026-04-26",
   local: "Manaus, AM",
-  endereco: "Faixa Liberada — Av. Getúlio Vargas",
   conceito:
     "A pluralidade do vestir amazonense — indígena, afro e urbana — em uma só passarela.",
   intro:
