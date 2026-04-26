@@ -10,8 +10,8 @@ const config: Config = {
         cream: "#faf7f2",
       },
       fontFamily: {
-        serif: ["Cormorant Garamond", "Georgia", "serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
       },
       letterSpacing: {
         editorial: "0.18em",
