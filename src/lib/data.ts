@@ -46,27 +46,27 @@ export interface EventoInfo {
   nome: string;
   edicao: string;
   dataLegivel: string;
+  dataPtBr: string;
   dataISO: string;
   local: string;
-  enderecoCurto: string;
   conceito: string;
   descricaoLonga: string;
 }
 
 export const evento: EventoInfo = {
-  nome: "Manifesto",
-  edicao: "Edição I",
+  nome: "Desfile Manifesto Amazonense",
+  edicao: "Semana Fashion Revolution",
   dataLegivel: "26 de Abril de 2026",
+  dataPtBr: "26/04/2026",
   dataISO: "2026-04-26",
-  local: "Galpão Central",
-  enderecoCurto: "São Paulo — SP",
+  local: "Manaus - AM",
   conceito:
-    "Um desfile-celebração da moda autoral brasileira. Roupa como gesto, passarela como discurso.",
+    "Um desfile-celebração da moda autoral Amazonense. Roupa como gesto, passarela como discurso.",
   descricaoLonga:
     "Manifesto reúne marcas independentes, modelos e profissionais de bastidores em uma noite editorial única. Cada look é uma frase. Juntos, formam um manifesto sobre o que vestimos — e o que isso diz sobre quem somos.",
 };
 
-const wa = (numero: string, msg = "Olá! Vi seu trabalho no Manifesto.") =>
+const wa = (numero: string, msg = "Oi! Vi seu trabalho no Desfile Manifesto Amazonense") =>
   `https://wa.me/${numero}?text=${encodeURIComponent(msg)}`;
 
 // 19 looks — ordem da passarela.

@@ -33,7 +33,7 @@ export function AboutSection() {
               <dd>
                 {evento.local}
                 <br />
-                <span className="text-ink/60">{evento.enderecoCurto}</span>
+                <span className="text-ink/60">{evento.local}</span>
               </dd>
             </div>
           </dl>

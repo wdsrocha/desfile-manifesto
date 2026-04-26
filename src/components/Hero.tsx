@@ -15,7 +15,7 @@ export function Hero() {
             <time dateTime={evento.dataISO}>{evento.dataLegivel}</time>
             <span aria-hidden>·</span>
             <span>
-              {evento.local} — {evento.enderecoCurto}
+              {evento.local}
             </span>
           </div>
 
