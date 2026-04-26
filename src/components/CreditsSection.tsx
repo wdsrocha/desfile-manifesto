@@ -43,12 +43,6 @@ export function CreditsSection() {
             </div>
           ))}
         </dl>
-
-        <p className="mt-10 sm:mt-12 max-w-3xl text-ink/60 text-sm sm:text-base leading-relaxed">
-          Agradecimento especial ao Prestige Hotel e à Meta Hotelaria por
-          abraçarem a cena cultural de Manaus como parceiros oficiais desta
-          ação.
-        </p>
       </div>
     </section>
   );

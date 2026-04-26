@@ -346,20 +346,7 @@ export const produtoraExecutiva = equipeProducao.find(
 
 export const creditos: CreditoGrupo[] = [
   {
-    titulo: "Equipe voluntária",
-    pessoas: [
-      { instagram: "@cavalcantte" },
-      { instagram: "@eumayaalves" },
-      { instagram: "@_sou_hi" },
-      { instagram: "@lylleabreu" },
-      { instagram: "@modatbmpensa" },
-      { instagram: "@dione.maciel.90" },
-      { instagram: "@holandapaulo" },
-      { nome: "Daina Viana" },
-    ],
-  },
-  {
-    titulo: "Elenco confirmado",
+    titulo: "Elenco",
     pessoas: [
       { instagram: "@travamazonica" },
       { instagram: "@art.delly" },
@@ -379,6 +366,20 @@ export const creditos: CreditoGrupo[] = [
     ],
   },
   {
+    titulo: "Equipe voluntária",
+    pessoas: [
+      { instagram: "@cavalcantte" },
+      { instagram: "@eumayaalves" },
+      { instagram: "@_sou_hi" },
+      { instagram: "@lylleabreu" },
+      { instagram: "@modatbmpensa" },
+      { instagram: "@dione.maciel.90" },
+      { instagram: "@holandapaulo" },
+      { instagram: "@sharp.freestyle" },
+      { nome: "Daina Viana" },
+    ],
+  },
+  {
     titulo: "Apoio institucional",
     pessoas: [
       { instagram: "@manauscult_" },
@@ -387,9 +388,6 @@ export const creditos: CreditoGrupo[] = [
   },
   {
     titulo: "Parceiros oficiais",
-    pessoas: [
-      { nome: "Prestige Hotel" },
-      { nome: "Meta Hotelaria" },
-    ],
+    pessoas: [{ instagram: "@prestigehotelmanaus" }],
   },
 ];
