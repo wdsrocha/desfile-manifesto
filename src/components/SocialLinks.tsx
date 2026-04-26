@@ -1,4 +1,4 @@
-import { Instagram, MessageCircle } from "lucide-react";
+import { InstagramIcon, WhatsAppIcon } from "./BrandIcons";
 import { instagramUrl } from "@/lib/instagram";
 
 interface SocialLinksProps {
@@ -25,7 +25,7 @@ export function SocialLinks({
         aria-label={`Instagram de ${nome}`}
         className={`${dim} inline-flex items-center justify-center rounded-full border border-ink/15 hover:border-ink hover:bg-ink hover:text-cream transition-colors`}
       >
-        <Instagram size={icon} strokeWidth={1.5} />
+        <InstagramIcon size={icon} strokeWidth={1.5} />
       </a>
       <a
         href={whatsappUrl}
@@ -34,7 +34,7 @@ export function SocialLinks({
         aria-label={`WhatsApp de ${nome}`}
         className={`${dim} inline-flex items-center justify-center rounded-full border border-ink/15 hover:border-ink hover:bg-ink hover:text-cream transition-colors`}
       >
-        <MessageCircle size={icon} strokeWidth={1.5} />
+        <WhatsAppIcon size={icon} strokeWidth={1.5} />
       </a>
     </div>
   );

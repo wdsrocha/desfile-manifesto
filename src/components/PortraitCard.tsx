@@ -1,6 +1,6 @@
-import { Instagram } from "lucide-react";
 import type { Pessoa } from "@/lib/data";
 import { instagramUrl } from "@/lib/instagram";
+import { InstagramIcon } from "./BrandIcons";
 
 interface PortraitCardProps {
   pessoa: Pessoa;
@@ -32,7 +32,7 @@ export function PortraitCard({
           <span className="text-[11px] uppercase tracking-editorial">
             {pessoa.instagram}
           </span>
-          <Instagram size={16} strokeWidth={1.5} />
+          <InstagramIcon size={16} strokeWidth={1.5} />
         </div>
       </div>
 

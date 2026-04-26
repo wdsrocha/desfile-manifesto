@@ -1,7 +1,7 @@
-import { Instagram } from "lucide-react";
 import { evento, produtoraExecutiva } from "@/lib/data";
 import { instagramUrl } from "@/lib/instagram";
 import { SectionHeader } from "./SectionHeader";
+import { InstagramIcon } from "./BrandIcons";
 
 export function AboutSection() {
   return (
@@ -74,7 +74,7 @@ export function AboutSection() {
             rel="noopener noreferrer"
             className="mt-6 inline-flex items-center gap-2 border border-ink/15 hover:border-ink hover:bg-ink hover:text-cream transition-colors px-4 py-2.5 text-[11px] uppercase tracking-editorial"
           >
-            <Instagram size={14} strokeWidth={1.5} />
+            <InstagramIcon size={14} strokeWidth={1.5} />
             {produtoraExecutiva.instagram}
           </a>
         </aside>
