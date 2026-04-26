@@ -49,6 +49,7 @@ export interface EventoInfo {
   dataPtBr: string;
   dataISO: string;
   local: string;
+  endereco: string;
   conceito: string;
   descricaoLonga: string;
 }
@@ -59,11 +60,12 @@ export const evento: EventoInfo = {
   dataLegivel: "26 de Abril de 2026",
   dataPtBr: "26/04/2026",
   dataISO: "2026-04-26",
-  local: "Manaus - AM",
+  local: "Manaus, AM",
+  endereco: "Faixa Liberada — Av. Getúlio Vargas",
   conceito:
-    "Um desfile-celebração da moda autoral Amazonense. Roupa como gesto, passarela como discurso.",
+    "A pluralidade do vestir amazonense — indígena, afro e urbana — em uma só passarela.",
   descricaoLonga:
-    "Manifesto reúne marcas independentes, modelos e profissionais de bastidores em uma noite editorial única. Cada look é uma frase. Juntos, formam um manifesto sobre o que vestimos — e o que isso diz sobre quem somos.",
+    "Aprovado em edital do Ministério da Cultura, o Manifesto representa a moda amazonense na 6ª Teia de Cultura Nacional, em Aracruz (ES), de 19 a 24 de maio. Antes da viagem, a estreia acontece em casa: 26 de abril, na Faixa Liberada da Av. Getúlio Vargas, dentro da programação da Semana Fashion Revolution.",
 };
 
 export const looks: Look[] = [];

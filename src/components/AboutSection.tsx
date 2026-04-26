@@ -36,7 +36,7 @@ export function AboutSection() {
               <dd>
                 {evento.local}
                 <br />
-                <span className="text-ink/60">{evento.local}</span>
+                <span className="text-ink/60">{evento.endereco}</span>
               </dd>
             </div>
           </dl>
@@ -68,9 +68,7 @@ export function AboutSection() {
           </div>
 
           <p className="mt-6 text-ink/75 text-sm sm:text-base leading-relaxed">
-            Curadoria, direção de elenco e produção executiva conduzidas por
-            Glícia Cáuper. Manifesto é uma plataforma para marcas autorais
-            brasileiras encontrarem público e imprensa em um mesmo gesto.
+            Produção executiva e direção de elenco por Glícia Cáuper.
           </p>
 
           <a
