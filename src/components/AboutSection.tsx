@@ -11,10 +11,12 @@ export function AboutSection() {
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
         <div className="md:col-span-7">
-          <SectionHeader
-            title="Sobre o evento"
-            description={evento.descricaoLonga}
-          />
+          <SectionHeader title="Sobre o evento" />
+
+          <div className="mt-3 max-w-2xl flex flex-col gap-4 text-ink/70 text-sm sm:text-base leading-relaxed">
+            <p>{evento.intro}</p>
+            <p>{evento.descricaoLonga}</p>
+          </div>
 
           <dl className="mt-10 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
             <div>

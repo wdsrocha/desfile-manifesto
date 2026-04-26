@@ -61,6 +61,7 @@ export interface EventoInfo {
   local: string;
   endereco: string;
   conceito: string;
+  intro: string;
   descricaoLonga: string;
 }
 
@@ -74,6 +75,8 @@ export const evento: EventoInfo = {
   endereco: "Faixa Liberada — Av. Getúlio Vargas",
   conceito:
     "A pluralidade do vestir amazonense — indígena, afro e urbana — em uma só passarela.",
+  intro:
+    "Manaus veste muitas histórias ao mesmo tempo — indígena, afro e urbana — e raramente as coloca lado a lado. O Manifesto é um gesto coletivo para juntar essa pluralidade na mesma passarela, dentro da Semana Fashion Revolution, semana em que o mundo se pergunta quem faz a moda que vestimos.",
   descricaoLonga:
     "A estreia é em Manaus, no dia 26 de abril, na Faixa Liberada da Av. Getúlio Vargas, dentro da programação da Semana Fashion Revolution. Aprovado em edital do Ministério da Cultura, entre 19 e 24 de maio o Manifesto segue para Aracruz (ES), levando a moda amazonense para a 6ª Teia de Cultura Nacional.",
 };
