@@ -1,7 +1,6 @@
 import { evento, produtoraExecutiva } from "@/lib/data";
 import { instagramUrl } from "@/lib/instagram";
 import { SectionHeader } from "./SectionHeader";
-import { InstagramIcon } from "./BrandIcons";
 
 export function AboutSection() {
   return (
@@ -44,9 +43,7 @@ export function AboutSection() {
         </div>
 
         <aside className="md:col-span-5 md:pl-8 md:border-l md:border-ink/10">
-          <span className="editorial-eyebrow">Produção executiva</span>
-
-          <div className="mt-5 flex items-center gap-4">
+          <div className="flex items-center gap-4">
             {produtoraExecutiva.imagemUrl && (
               <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-gradient-to-br from-ink/[0.08] to-ink/[0.16] shrink-0">
                 <img
@@ -78,7 +75,6 @@ export function AboutSection() {
             rel="noopener noreferrer"
             className="mt-6 inline-flex items-center gap-2 border border-ink/15 hover:border-ink hover:bg-ink hover:text-cream transition-colors px-4 py-2.5 text-[11px] uppercase tracking-editorial"
           >
-            <InstagramIcon size={14} strokeWidth={1.5} />
             {produtoraExecutiva.instagram}
           </a>
         </aside>
