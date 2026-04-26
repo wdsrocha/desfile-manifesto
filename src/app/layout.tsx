@@ -16,13 +16,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Manifesto — Desfile de Moda",
+  title: "Desfile Manifesto Amazonense",
   description:
-    "Manifesto: um desfile-celebração que reúne marcas autorais, modelos e criativos em uma noite editorial única.",
+    "Desfile aberto em Manaus, dia 26 de abril, na Faixa Liberada da Av. Getúlio Vargas — dentro da Semana Fashion Revolution. Aprovado em edital do Ministério da Cultura, segue para a 6ª Teia de Cultura Nacional, em Aracruz (ES), entre 19 e 24 de maio.",
   openGraph: {
-    title: "Manifesto — Desfile de Moda",
+    title: "Desfile Manifesto Amazonense",
     description:
-      "Manifesto: um desfile-celebração que reúne marcas autorais, modelos e criativos.",
+      "26 de abril, na Faixa Liberada da Av. Getúlio Vargas, dentro da Semana Fashion Revolution.",
     type: "website",
   },
 };
