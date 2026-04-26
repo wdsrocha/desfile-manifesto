@@ -25,7 +25,10 @@ export function AboutSection() {
             <div>
               <dt className="editorial-eyebrow mb-1">Data</dt>
               <dd>
-                <time dateTime={evento.dataISO}>{evento.dataLegivel}</time>
+                <time dateTime={evento.dataISO}>
+                  <span className="sm:hidden">{evento.dataPtBr}</span>
+                  <span className="hidden sm:inline">{evento.dataLegivel}</span>
+                </time>
               </dd>
             </div>
             <div>

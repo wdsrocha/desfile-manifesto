@@ -11,7 +11,7 @@ export function Footer() {
             <span className="text-cream/40">.</span>
           </p>
           <p className="mt-2 text-[11px] uppercase tracking-editorial text-cream/60">
-            {evento.edicao} · {evento.dataLegivel}
+            {evento.edicao} · <span className="sm:hidden">{evento.dataPtBr}</span><span className="hidden sm:inline">{evento.dataLegivel}</span>
           </p>
         </div>
 

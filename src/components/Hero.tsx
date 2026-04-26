@@ -12,7 +12,10 @@ export function Hero() {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase tracking-editorial text-cream/70">
             <span>{evento.edicao}</span>
             <span aria-hidden>·</span>
-            <time dateTime={evento.dataISO}>{evento.dataLegivel}</time>
+            <time dateTime={evento.dataISO}>
+              <span className="sm:hidden">{evento.dataPtBr}</span>
+              <span className="hidden sm:inline">{evento.dataLegivel}</span>
+            </time>
             <span aria-hidden>·</span>
             <span>
               {evento.local}
