@@ -11,11 +11,6 @@ export function Footer() {
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-editorial text-cream/60">
           <span>{evento.edicao}</span>
           <span aria-hidden>·</span>
-          <time dateTime={evento.dataISO}>
-            <span className="sm:hidden">{evento.dataPtBr}</span>
-            <span className="hidden sm:inline">{evento.dataLegivel}</span>
-          </time>
-          <span aria-hidden>·</span>
           <span>{evento.local}</span>
         </div>
       </div>
