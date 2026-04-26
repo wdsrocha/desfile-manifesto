@@ -36,20 +36,29 @@ export function Hero() {
             {evento.conceito}
           </p>
 
-          <div className="flex items-center gap-3 pt-2">
-            <a
-              href="#looks"
-              className="inline-flex items-center gap-2 border border-cream/30 hover:border-cream hover:bg-cream hover:text-ink transition-colors px-5 py-3 text-[11px] uppercase tracking-editorial"
-            >
-              Ver os looks
-            </a>
+          <nav
+            aria-label="Seções principais"
+            className="flex flex-wrap gap-x-5 gap-y-2 pt-2 text-[11px] uppercase tracking-editorial"
+          >
             <a
               href="#sobre"
-              className="inline-flex items-center gap-2 px-5 py-3 text-[11px] uppercase tracking-editorial text-cream/70 hover:text-cream transition-colors"
+              className="text-cream/70 hover:text-cream transition-colors"
             >
               Sobre o evento
             </a>
-          </div>
+            <a
+              href="#marcas"
+              className="text-cream/70 hover:text-cream transition-colors"
+            >
+              Marcas & Criativos
+            </a>
+            <a
+              href="#creditos"
+              className="text-cream/70 hover:text-cream transition-colors"
+            >
+              Créditos
+            </a>
+          </nav>
         </div>
       </div>
     </header>

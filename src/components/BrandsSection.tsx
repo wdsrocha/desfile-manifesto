@@ -10,7 +10,7 @@ export function BrandsSection() {
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHeader
-          title="Marcas & criativos"
+          title="Marcas & Criativos"
           description="As assinaturas por trás de cada peça. Slow fashion, autoria e processos que valem ser olhados de perto."
         />
 
