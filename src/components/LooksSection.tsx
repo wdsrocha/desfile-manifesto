@@ -12,7 +12,7 @@ export function LooksSection() {
   return (
     <section
       id="looks"
-      className="bg-cream text-ink py-16 sm:py-24 md:py-32"
+      className="bg-cream text-ink py-24 sm:py-28 md:py-32"
     >
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <SectionHeader title="Looks da passarela" />
