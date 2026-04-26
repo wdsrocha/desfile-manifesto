@@ -25,7 +25,7 @@ export function Hero() {
             <span className="text-cream/40">.</span>
           </h1>
 
-          <p className="font-serif text-xl sm:text-2xl md:text-3xl leading-snug text-cream/90 max-w-2xl">
+          <p className="font-serif text-xl sm:text-2xl md:text-3xl leading-snug text-cream/90 max-w-2xl text-balance">
             {evento.conceito}
           </p>
 
