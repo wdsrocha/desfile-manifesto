@@ -1,19 +1,4 @@
-// Static mock data for the Manifesto landing page. Swap image paths & handles before the show.
-
-export type Papel =
-  | "Marca / Estilista"
-  | "Direção Criativa"
-  | "Modelo"
-  | "Produção Executiva"
-  | "Direção de Arte"
-  | "Beleza"
-  | "Cabelo"
-  | "Maquiagem"
-  | "Styling"
-  | "Iluminação"
-  | "Sonoplastia"
-  | "Fotografia"
-  | "Backstage";
+export type Papel = "Marca / Estilista" | "Modelo" | "Produção Executiva";
 
 export interface Pessoa {
   id: string;
@@ -22,7 +7,6 @@ export interface Pessoa {
   nomeArtisticoOuMarca: string;
   imagemUrl: string;
   instagram: string;
-  whatsappUrl: string;
 }
 
 export interface MarcaOuCriativo extends Pessoa {
@@ -102,7 +86,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Roupas em geral",
     imagemUrl: "",
     instagram: "@eutupana",
-    whatsappUrl: "",
   },
   {
     id: "marca-sup-aspecto",
@@ -112,7 +95,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Camisetaria",
     imagemUrl: "",
     instagram: "@sup.aspecto",
-    whatsappUrl: "",
   },
   {
     id: "marca-eztrelado",
@@ -122,7 +104,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Brechó e upcycling",
     imagemUrl: "",
     instagram: "@eztrelado",
-    whatsappUrl: "",
   },
   {
     id: "marca-ariskaland",
@@ -132,7 +113,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Criativa de moda",
     imagemUrl: "",
     instagram: "@ariskaland",
-    whatsappUrl: "",
   },
   {
     id: "marca-biolly",
@@ -142,7 +122,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Criativo de moda",
     imagemUrl: "",
     instagram: "@biolly.shantelly",
-    whatsappUrl: "",
   },
   {
     id: "marca-fernanda-menezes",
@@ -152,7 +131,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Crochê",
     imagemUrl: "",
     instagram: "@ateliefernandamenezes",
-    whatsappUrl: "",
   },
   {
     id: "marca-dispiei",
@@ -162,7 +140,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Brechó",
     imagemUrl: "",
     instagram: "@brchdispiei",
-    whatsappUrl: "",
   },
   {
     id: "marca-hebrom",
@@ -172,7 +149,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Criativo de moda",
     imagemUrl: "",
     instagram: "@h.e.b.r.o.m",
-    whatsappUrl: "",
   },
   {
     id: "marca-paulo-henrique",
@@ -182,7 +158,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Criativo de moda",
     imagemUrl: "",
     instagram: "@_paulo_henryk",
-    whatsappUrl: "",
   },
   {
     id: "marca-auza-dos-santos",
@@ -192,7 +167,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Criativo de moda",
     imagemUrl: "",
     instagram: "@auzadosantos",
-    whatsappUrl: "",
   },
   {
     id: "marca-renata-sampaio",
@@ -202,7 +176,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Biojóias",
     imagemUrl: "",
     instagram: "@design_renatasampaio",
-    whatsappUrl: "",
   },
   {
     id: "marca-melanina-am",
@@ -212,7 +185,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Afrowear e acessórios",
     imagemUrl: "",
     instagram: "@melanina.am",
-    whatsappUrl: "",
   },
   {
     id: "marca-1970",
@@ -222,7 +194,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Streetwear",
     imagemUrl: "",
     instagram: "@1970.atelier",
-    whatsappUrl: "",
   },
   {
     id: "marca-sapopema",
@@ -232,7 +203,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Roupas e acessórios com biomateriais",
     imagemUrl: "",
     instagram: "@sapopemabiojoia",
-    whatsappUrl: "",
   },
   {
     id: "marca-pacova",
@@ -242,7 +212,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Camisetaria",
     imagemUrl: "",
     instagram: "@usepacova",
-    whatsappUrl: "",
   },
   {
     id: "marca-badu",
@@ -252,7 +221,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Brechó e upcycling",
     imagemUrl: "",
     instagram: "@kbaduh",
-    whatsappUrl: "",
   },
   {
     id: "marca-derequine",
@@ -262,7 +230,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Moda indígena",
     imagemUrl: "",
     instagram: "@ateliederequine",
-    whatsappUrl: "",
   },
   {
     id: "marca-artsflorlinda",
@@ -272,7 +239,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Crochê",
     imagemUrl: "",
     instagram: "@artsflorlinda",
-    whatsappUrl: "",
   },
   {
     id: "marca-rita-prossi",
@@ -282,7 +248,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Acessórios",
     imagemUrl: "",
     instagram: "@ritaprossi",
-    whatsappUrl: "",
   },
   {
     id: "marca-goodstrap",
@@ -292,7 +257,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Bolsas e acessórios em couro",
     imagemUrl: "",
     instagram: "@goodstrap.br",
-    whatsappUrl: "",
   },
   {
     id: "marca-inaru-eyawa",
@@ -302,7 +266,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Acessórios",
     imagemUrl: "",
     instagram: "@inaru.eyawa",
-    whatsappUrl: "",
   },
   {
     id: "marca-kurupira",
@@ -312,7 +275,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Acessórios e biojóias",
     imagemUrl: "",
     instagram: "@kurupirabiojoias",
-    whatsappUrl: "",
   },
   {
     id: "marca-samba-e-amor",
@@ -322,7 +284,6 @@ export const marcasECriativos: MarcaOuCriativo[] = [
     segmento: "Camisetaria",
     imagemUrl: "",
     instagram: "@sambaeamor.camisetaria",
-    whatsappUrl: "",
   },
 ];
 
@@ -336,7 +297,6 @@ export const equipeProducao: Pessoa[] = [
     nomeArtisticoOuMarca: "Glícia Cáuper",
     imagemUrl: "",
     instagram: "@gliciacauper",
-    whatsappUrl: "",
   },
 ];
 
