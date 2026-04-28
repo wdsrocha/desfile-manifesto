@@ -22,15 +22,21 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
-export type Brand = {
+export type Person = {
   _id: string;
-  _type: "brand";
+  _type: "person";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
   name?: string;
-  fullName?: string;
-  segment?: string;
+  stageName?: string;
+  role?:
+    | "model"
+    | "production"
+    | "photographer"
+    | "volunteer"
+    | "institutional"
+    | "partner";
   instagram?: string;
   image?: {
     asset?: SanityImageAssetReference;
@@ -57,6 +63,27 @@ export type SanityImageHotspot = {
   y?: number;
   height?: number;
   width?: number;
+};
+
+export type Brand = {
+  _id: string;
+  _type: "brand";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  fullName?: string;
+  segment?: string;
+  instagram?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  order?: number;
 };
 
 export type SanityImagePaletteSwatch = {
@@ -164,9 +191,10 @@ export type Slug = {
 
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
-  | Brand
+  | Person
   | SanityImageCrop
   | SanityImageHotspot
+  | Brand
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -196,10 +224,48 @@ export type AllBrandsQueryResult = Array<{
   } | null;
 }>;
 
+// Source: src/sanity/queries/people.ts
+// Variable: allModelsQuery
+// Query: *[_type == "person" && role == "model"] | order(order asc, stageName asc) {    _id,    name,    stageName,    instagram,    image  }
+export type AllModelsQueryResult = Array<{
+  _id: string;
+  name: string | null;
+  stageName: string | null;
+  instagram: string | null;
+  image: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+}>;
+
+// Source: src/sanity/queries/people.ts
+// Variable: executiveProducerQuery
+// Query: *[_type == "person" && role == "production"] | order(order asc) [0] {    _id,    name,    stageName,    instagram,    image  }
+export type ExecutiveProducerQueryResult = {
+  _id: string;
+  name: string | null;
+  stageName: string | null;
+  instagram: string | null;
+  image: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+} | null;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "brand"] | order(order asc, name asc) {\n    _id,\n    name,\n    fullName,\n    segment,\n    instagram,\n    image\n  }\n': AllBrandsQueryResult;
+    '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
+    '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }
 }
