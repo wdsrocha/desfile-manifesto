@@ -1,5 +1,6 @@
 import { client } from "@/sanity/client";
 import { allBrandsQuery } from "@/sanity/queries/brands";
+import { allCreditGroupsQuery } from "@/sanity/queries/credits";
 import {
   allModelsQuery,
   executiveProducerQuery,
@@ -13,10 +14,11 @@ import { CreditsSection } from "@/components/CreditsSection";
 import { Footer } from "@/components/Footer";
 
 export default async function Home() {
-  const [brands, models, executiveProducer] = await Promise.all([
+  const [brands, models, executiveProducer, creditGroups] = await Promise.all([
     client.fetch(allBrandsQuery),
     client.fetch(allModelsQuery),
     client.fetch(executiveProducerQuery),
+    client.fetch(allCreditGroupsQuery),
   ]);
 
   return (
@@ -27,7 +29,7 @@ export default async function Home() {
         <AboutSection executiveProducer={executiveProducer} />
         <BrandsSection brands={brands} />
         <ModelsSection models={models} />
-        <CreditsSection />
+        <CreditsSection groups={creditGroups} />
       </main>
       <Footer />
     </>
