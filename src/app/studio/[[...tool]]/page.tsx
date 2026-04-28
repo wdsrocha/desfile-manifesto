@@ -1,8 +1,11 @@
-import StudioWrapper from '@/components/StudioWrapper'
+'use client'
 
-export const dynamic = 'force-static'
-export { metadata, viewport } from 'next-sanity/studio'
+import dynamic from 'next/dynamic'
+
+const Studio = dynamic(() => import('@/components/StudioWrapper'), {
+  ssr: false,
+})
 
 export default function StudioPage() {
-  return <StudioWrapper />
+  return <Studio />
 }

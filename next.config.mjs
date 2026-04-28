@@ -9,7 +9,6 @@ const nextConfig = {
       },
     ],
   },
-  serverExternalPackages: ['styled-components', 'sanity', '@sanity/ui', '@sanity/vision'],
 };
 
 export default nextConfig;
