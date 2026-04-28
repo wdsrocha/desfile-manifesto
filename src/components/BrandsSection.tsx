@@ -1,8 +1,14 @@
-import { marcasECriativos } from "@/lib/data";
+import type { AllBrandsQueryResult } from "@/sanity/types";
 import { instagramUrl } from "@/lib/instagram";
 import { SectionHeader } from "./SectionHeader";
 
-export function BrandsSection() {
+interface BrandsSectionProps {
+  brands: AllBrandsQueryResult;
+}
+
+export function BrandsSection({ brands }: BrandsSectionProps) {
+  if (brands.length === 0) return null;
+
   return (
     <section
       id="marcas"
@@ -15,25 +21,29 @@ export function BrandsSection() {
         />
 
         <ul className="mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/10 border border-ink/10">
-          {marcasECriativos.map((m) => (
+          {brands.map((brand) => (
             <li
-              key={m.id}
+              key={brand._id}
               className="flex flex-col bg-cream p-6 sm:p-8 min-h-[200px]"
             >
-              <p className="text-[11px] uppercase tracking-editorial text-ink/55">
-                {m.segmento}
-              </p>
+              {brand.segment && (
+                <p className="text-[11px] uppercase tracking-editorial text-ink/55">
+                  {brand.segment}
+                </p>
+              )}
               <p className="font-serif text-2xl sm:text-3xl leading-[1.1] mt-3">
-                {m.nomeArtisticoOuMarca}
+                {brand.name}
               </p>
-              <a
-                href={instagramUrl(m.instagram)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-auto pt-6 text-sm text-ink/70 hover:text-ink underline-offset-4 hover:underline self-start transition-colors"
-              >
-                {m.instagram}
-              </a>
+              {brand.instagram && (
+                <a
+                  href={instagramUrl(brand.instagram)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto pt-6 text-sm text-ink/70 hover:text-ink underline-offset-4 hover:underline self-start transition-colors"
+                >
+                  {brand.instagram}
+                </a>
+              )}
             </li>
           ))}
         </ul>
