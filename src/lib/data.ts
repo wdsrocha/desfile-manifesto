@@ -1,14 +1,3 @@
-export type Papel = "Marca / Estilista" | "Modelo" | "Produção Executiva";
-
-export interface Pessoa {
-  id: string;
-  nomeCompleto: string;
-  papel: Papel;
-  nomeArtisticoOuMarca: string;
-  imagemUrl: string;
-  instagram: string;
-}
-
 export interface LookModelo {
   nome: string;
   instagram?: string;
@@ -70,23 +59,6 @@ export const proximoDesfile: DesfileFollowUp = {
 };
 
 export const looks: Look[] = [];
-
-export const modelos: Pessoa[] = [];
-
-export const equipeProducao: Pessoa[] = [
-  {
-    id: "prod-glicia",
-    nomeCompleto: "Glícia Cáuper",
-    papel: "Produção Executiva",
-    nomeArtisticoOuMarca: "Glícia Cáuper",
-    imagemUrl: "",
-    instagram: "@gliciacauper",
-  },
-];
-
-export const produtoraExecutiva = equipeProducao.find(
-  (p) => p.id === "prod-glicia",
-)!;
 
 export const creditos: CreditoGrupo[] = [
   {
