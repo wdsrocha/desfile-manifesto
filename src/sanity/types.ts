@@ -15,6 +15,22 @@
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: schema.json
+export type CreditGroup = {
+  _id: string;
+  _type: "creditGroup";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  order?: number;
+  entries?: Array<{
+    name?: string;
+    instagram?: string;
+    _type: "creditEntry";
+    _key: string;
+  }>;
+};
+
 export type SanityImageAssetReference = {
   _ref: string;
   _type: "reference";
@@ -190,6 +206,7 @@ export type Slug = {
 };
 
 export type AllSanitySchemaTypes =
+  | CreditGroup
   | SanityImageAssetReference
   | Person
   | SanityImageCrop
@@ -222,6 +239,19 @@ export type AllBrandsQueryResult = Array<{
     alt?: string;
     _type: "image";
   } | null;
+}>;
+
+// Source: src/sanity/queries/credits.ts
+// Variable: allCreditGroupsQuery
+// Query: *[_type == "creditGroup"] | order(order asc) {    _id,    title,    entries[] {      _key,      name,      instagram    }  }
+export type AllCreditGroupsQueryResult = Array<{
+  _id: string;
+  title: string | null;
+  entries: Array<{
+    _key: string;
+    name: string | null;
+    instagram: string | null;
+  }> | null;
 }>;
 
 // Source: src/sanity/queries/people.ts
@@ -265,6 +295,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "brand"] | order(order asc, name asc) {\n    _id,\n    name,\n    fullName,\n    segment,\n    instagram,\n    image\n  }\n': AllBrandsQueryResult;
+    '\n  *[_type == "creditGroup"] | order(order asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }
