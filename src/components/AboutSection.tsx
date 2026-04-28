@@ -1,8 +1,21 @@
-import { evento, produtoraExecutiva, proximoDesfile } from "@/lib/data";
+import Image from "next/image";
+import { evento, proximoDesfile } from "@/lib/data";
+import type { ExecutiveProducerQueryResult } from "@/sanity/types";
+import { urlForImage } from "@/sanity/image";
 import { instagramUrl } from "@/lib/instagram";
 import { SectionHeader } from "./SectionHeader";
 
-export function AboutSection() {
+interface AboutSectionProps {
+  executiveProducer: ExecutiveProducerQueryResult;
+}
+
+export function AboutSection({ executiveProducer }: AboutSectionProps) {
+  const producerName =
+    executiveProducer?.stageName || executiveProducer?.name || "";
+  const producerImage = executiveProducer?.image?.asset
+    ? urlForImage(executiveProducer.image).width(160).height(160).url()
+    : null;
+
   return (
     <section
       id="sobre"
@@ -56,42 +69,46 @@ export function AboutSection() {
           </div>
         </div>
 
-        <aside className="md:col-span-5 md:pl-8 md:border-l md:border-ink/10">
-          <div className="flex items-center gap-4">
-            {produtoraExecutiva.imagemUrl && (
-              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-gradient-to-br from-ink/[0.08] to-ink/[0.16] shrink-0">
-                <img
-                  src={produtoraExecutiva.imagemUrl}
-                  alt={produtoraExecutiva.nomeCompleto}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                />
+        {executiveProducer && (
+          <aside className="md:col-span-5 md:pl-8 md:border-l md:border-ink/10">
+            <div className="flex items-center gap-4">
+              {producerImage && (
+                <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-gradient-to-br from-ink/[0.08] to-ink/[0.16] shrink-0">
+                  <Image
+                    src={producerImage}
+                    alt={producerName}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <div>
+                <p className="font-serif text-2xl sm:text-3xl leading-tight">
+                  {producerName}
+                </p>
+                <p className="text-[11px] uppercase tracking-editorial text-ink/60 mt-1">
+                  Produção Executiva
+                </p>
               </div>
-            )}
-            <div>
-              <p className="font-serif text-2xl sm:text-3xl leading-tight">
-                {produtoraExecutiva.nomeCompleto}
-              </p>
-              <p className="text-[11px] uppercase tracking-editorial text-ink/60 mt-1">
-                {produtoraExecutiva.papel}
-              </p>
             </div>
-          </div>
 
-          <p className="mt-6 text-ink/75 text-sm sm:text-base leading-relaxed">
-            Produção executiva e direção de elenco por Glícia Cáuper.
-          </p>
+            <p className="mt-6 text-ink/75 text-sm sm:text-base leading-relaxed">
+              Produção executiva e direção de elenco por {producerName}.
+            </p>
 
-          <a
-            href={instagramUrl(produtoraExecutiva.instagram)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center gap-2 border border-ink/15 hover:border-ink hover:bg-ink hover:text-cream transition-colors px-4 py-2.5 text-[11px] uppercase tracking-editorial"
-          >
-            {produtoraExecutiva.instagram}
-          </a>
-        </aside>
+            {executiveProducer.instagram && (
+              <a
+                href={instagramUrl(executiveProducer.instagram)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 border border-ink/15 hover:border-ink hover:bg-ink hover:text-cream transition-colors px-4 py-2.5 text-[11px] uppercase tracking-editorial"
+              >
+                {executiveProducer.instagram}
+              </a>
+            )}
+          </aside>
+        )}
       </div>
     </section>
   );
