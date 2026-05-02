@@ -19,18 +19,41 @@ export const look = defineType({
         }),
     }),
     defineField({
-      name: 'image',
-      title: 'Imagem',
-      type: 'image',
-      options: { hotspot: true },
-      fields: [
-        defineField({
-          name: 'alt',
-          title: 'Texto alternativo',
-          type: 'string',
-        }),
+      name: 'images',
+      title: 'Imagens',
+      type: 'array',
+      description:
+        'A primeira imagem é a capa exibida na grid de looks. Arraste para reordenar.',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: 'alt',
+              title: 'Texto alternativo',
+              type: 'string',
+            }),
+            defineField({
+              name: 'photographerName',
+              title: 'Nome do fotógrafo',
+              type: 'string',
+            }),
+            defineField({
+              name: 'photographerInstagram',
+              title: 'Instagram do fotógrafo',
+              type: 'string',
+              description: 'Inclua o @ (ex.: "@fulano").',
+              validation: (Rule) =>
+                Rule.regex(/^@?[\w.]+$/, {
+                  name: 'instagramHandle',
+                  invert: false,
+                }),
+            }),
+          ],
+        },
       ],
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: 'model',
@@ -65,7 +88,7 @@ export const look = defineType({
     select: {
       title: 'lookNumber',
       subtitle: 'model.name',
-      media: 'image',
+      media: 'images.0',
     },
     prepare: ({ title, subtitle, media }) => ({
       title: title ? `Look ${title}` : 'Look',
