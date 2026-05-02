@@ -7,8 +7,12 @@ export const allLooksQuery = defineQuery(`
     images[]{
       asset,
       alt,
-      photographerName,
-      photographerInstagram
+      photographer->{
+        _id,
+        name,
+        stageName,
+        instagram
+      }
     },
     model {
       name,

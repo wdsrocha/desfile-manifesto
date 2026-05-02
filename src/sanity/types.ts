@@ -38,21 +38,15 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
-export type Person = {
+export type Brand = {
   _id: string;
-  _type: "person";
+  _type: "brand";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
   name?: string;
-  stageName?: string;
-  role?:
-    | "model"
-    | "production"
-    | "photographer"
-    | "volunteer"
-    | "institutional"
-    | "partner";
+  fullName?: string;
+  segment?: string;
   instagram?: string;
   image?: {
     asset?: SanityImageAssetReference;
@@ -81,25 +75,11 @@ export type SanityImageHotspot = {
   width?: number;
 };
 
-export type Brand = {
-  _id: string;
-  _type: "brand";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
-  fullName?: string;
-  segment?: string;
-  instagram?: string;
-  image?: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  };
-  order?: number;
+export type PersonReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "person";
 };
 
 export type Look = {
@@ -115,8 +95,7 @@ export type Look = {
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
-    photographerName?: string;
-    photographerInstagram?: string;
+    photographer?: PersonReference;
     _type: "image";
     _key: string;
   }>;
@@ -125,6 +104,33 @@ export type Look = {
     instagram?: string;
   };
   styling?: Array<string>;
+};
+
+export type Person = {
+  _id: string;
+  _type: "person";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  stageName?: string;
+  role?:
+    | "model"
+    | "production"
+    | "photographer"
+    | "volunteer"
+    | "institutional"
+    | "partner";
+  instagram?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  order?: number;
 };
 
 export type NextEvent = {
@@ -261,11 +267,12 @@ export type Slug = {
 export type AllSanitySchemaTypes =
   | CreditGroup
   | SanityImageAssetReference
-  | Person
+  | Brand
   | SanityImageCrop
   | SanityImageHotspot
-  | Brand
+  | PersonReference
   | Look
+  | Person
   | NextEvent
   | Event
   | SanityImagePaletteSwatch
@@ -336,15 +343,19 @@ export type NextEventQueryResult = {
 
 // Source: src/sanity/queries/looks.ts
 // Variable: allLooksQuery
-// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    images[]{      asset,      alt,      photographerName,      photographerInstagram    },    model {      name,      instagram    },    styling  }
+// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    images[]{      asset,      alt,      photographer->{        _id,        name,        stageName,        instagram      }    },    model {      name,      instagram    },    styling  }
 export type AllLooksQueryResult = Array<{
   _id: string;
   lookNumber: string | null;
   images: Array<{
     asset: SanityImageAssetReference | null;
     alt: string | null;
-    photographerName: string | null;
-    photographerInstagram: string | null;
+    photographer: {
+      _id: string;
+      name: string | null;
+      stageName: string | null;
+      instagram: string | null;
+    } | null;
   }> | null;
   model: {
     name: string | null;
@@ -397,7 +408,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "creditGroup"] | order(order asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
     '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
-    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    images[]{\n      asset,\n      alt,\n      photographerName,\n      photographerInstagram\n    },\n    model {\n      name,\n      instagram\n    },\n    styling\n  }\n': AllLooksQueryResult;
+    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    images[]{\n      asset,\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    styling\n  }\n': AllLooksQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }

@@ -35,20 +35,14 @@ export const look = defineType({
               type: 'string',
             }),
             defineField({
-              name: 'photographerName',
-              title: 'Nome do fotógrafo',
-              type: 'string',
-            }),
-            defineField({
-              name: 'photographerInstagram',
-              title: 'Instagram do fotógrafo',
-              type: 'string',
-              description: 'Inclua o @ (ex.: "@fulano").',
-              validation: (Rule) =>
-                Rule.regex(/^@?[\w.]+$/, {
-                  name: 'instagramHandle',
-                  invert: false,
-                }),
+              name: 'photographer',
+              title: 'Fotógrafo(a)',
+              type: 'reference',
+              to: [{ type: 'person' }],
+              options: {
+                filter: 'role == "photographer"',
+                disableNew: false,
+              },
             }),
           ],
         },

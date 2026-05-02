@@ -68,8 +68,8 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
                 objectFit="contain"
               />
               <PhotographerCredit
-                name={img.photographerName}
-                instagram={img.photographerInstagram}
+                name={img.photographer?.stageName ?? img.photographer?.name}
+                instagram={img.photographer?.instagram}
               />
             </div>
           ))}
