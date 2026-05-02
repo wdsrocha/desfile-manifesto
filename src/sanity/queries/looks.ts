@@ -5,7 +5,17 @@ export const allLooksQuery = defineQuery(`
     _id,
     lookNumber,
     images[]{
-      asset,
+      asset->{
+        _id,
+        _type,
+        metadata {
+          dimensions {
+            width,
+            height,
+            aspectRatio
+          }
+        }
+      },
       alt,
       photographer->{
         _id,
