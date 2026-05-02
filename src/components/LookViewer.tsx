@@ -2,9 +2,10 @@
 
 import { useEffect } from "react";
 import { X } from "lucide-react";
-import type { Look } from "@/lib/data";
-import { lookImageUrl } from "@/lib/looks";
+import type { AllLooksQueryResult } from "@/sanity/types";
 import { LookImage } from "./LookImage";
+
+type Look = AllLooksQueryResult[number];
 
 interface LookViewerProps {
   look: Look | null;
@@ -27,6 +28,8 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
       document.body.style.overflow = prev;
     };
   }, [open, onClose]);
+
+  const number = look?.lookNumber ?? "";
 
   return (
     <div
@@ -74,8 +77,8 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
         {look && (
           <div className="flex flex-col sm:flex-row max-h-[92vh] sm:max-h-[88vh] overflow-y-auto sm:overflow-visible">
             <LookImage
-              src={lookImageUrl(look.id)}
-              alt={`Look ${look.id}`}
+              image={look.image}
+              alt={`Look ${number}`}
               priority
               sizes="(min-width: 640px) 50vh, 100vw"
               className="aspect-[9/16] w-full sm:w-auto sm:h-[88vh] sm:flex-shrink-0"
@@ -85,25 +88,25 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
               <div className="flex flex-col gap-2">
                 <span className="editorial-eyebrow">Look</span>
                 <h3 className="font-serif text-2xl sm:text-3xl leading-tight">
-                  {look.id}
+                  {number}
                 </h3>
               </div>
 
               <div className="flex flex-col gap-5 text-sm sm:text-base">
-                {look.modelo && (
+                {look.model?.name && (
                   <div>
                     <div className="editorial-eyebrow mb-1">Modelo</div>
                     <div className="text-ink leading-snug">
-                      {look.modelo.nome}
+                      {look.model.name}
                     </div>
-                    {look.modelo.instagram && (
+                    {look.model.instagram && (
                       <a
-                        href={`https://instagram.com/${look.modelo.instagram.replace(/^@/, "")}`}
+                        href={`https://instagram.com/${look.model.instagram.replace(/^@/, "")}`}
                         target="_blank"
                         rel="noreferrer noopener"
                         className="mt-0.5 inline-block text-[13px] text-ink/60 hover:text-ink transition-colors"
                       >
-                        {look.modelo.instagram}
+                        {look.model.instagram}
                       </a>
                     )}
                   </div>

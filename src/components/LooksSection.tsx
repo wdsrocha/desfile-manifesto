@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { looks, type Look } from "@/lib/data";
-import { lookImageUrl } from "@/lib/looks";
+import type { AllLooksQueryResult } from "@/sanity/types";
 import { SectionHeader } from "./SectionHeader";
 import { LookImage } from "./LookImage";
 import { LookViewer } from "./LookViewer";
 
-export function LooksSection() {
+type Look = AllLooksQueryResult[number];
+
+interface LooksSectionProps {
+  looks: AllLooksQueryResult;
+}
+
+export function LooksSection({ looks }: LooksSectionProps) {
   const [active, setActive] = useState<Look | null>(null);
 
   return (
@@ -45,32 +50,33 @@ export function LooksSection() {
           </div>
         ) : (
           <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {looks.map((look, i) => (
-              <li key={look.id}>
-                <button
-                  type="button"
-                  onClick={() => setActive(look)}
-                  className="group block w-full text-left"
-                  aria-label={`Abrir look ${look.id}`}
-                >
-                  <LookImage
-                    src={lookImageUrl(look.id)}
-                    alt={`Look ${look.id}`}
-                    sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
-                    priority={i < 4}
-                    className="aspect-[9/16] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-                  />
-                  <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
-                    <span className="editorial-eyebrow">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-[11px] text-ink/50 truncate max-w-[60%] text-right">
-                      {look.modelo?.nome ?? ""}
-                    </span>
-                  </div>
-                </button>
-              </li>
-            ))}
+            {looks.map((look, i) => {
+              const number = look.lookNumber ?? String(i + 1).padStart(2, "0");
+              return (
+                <li key={look._id}>
+                  <button
+                    type="button"
+                    onClick={() => setActive(look)}
+                    className="group block w-full text-left"
+                    aria-label={`Abrir look ${number}`}
+                  >
+                    <LookImage
+                      image={look.image}
+                      alt={`Look ${number}`}
+                      sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
+                      priority={i < 4}
+                      className="aspect-[9/16] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                    />
+                    <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
+                      <span className="editorial-eyebrow">{number}</span>
+                      <span className="text-[11px] text-ink/50 truncate max-w-[60%] text-right">
+                        {look.model?.name ?? ""}
+                      </span>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
