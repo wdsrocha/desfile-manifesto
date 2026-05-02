@@ -109,14 +109,17 @@ export type Look = {
   _updatedAt: string;
   _rev: string;
   lookNumber?: string;
-  image?: {
+  images?: Array<{
     asset?: SanityImageAssetReference;
     media?: unknown;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     alt?: string;
+    photographerName?: string;
+    photographerInstagram?: string;
     _type: "image";
-  };
+    _key: string;
+  }>;
   model?: {
     name?: string;
     instagram?: string;
@@ -277,7 +280,7 @@ export type AllSanitySchemaTypes =
 
 // Source: src/sanity/queries/brands.ts
 // Variable: allBrandsQuery
-// Query: *[_type == "brand"] | order(order asc, name asc) {    _id,    name,    fullName,    segment,    instagram,    image  }
+// Query: *[_type == "brand"] | order(name asc) {    _id,    name,    fullName,    segment,    instagram,    image  }
 export type AllBrandsQueryResult = Array<{
   _id: string;
   name: string | null;
@@ -333,18 +336,16 @@ export type NextEventQueryResult = {
 
 // Source: src/sanity/queries/looks.ts
 // Variable: allLooksQuery
-// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    image,    model {      name,      instagram    },    styling  }
+// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    images[]{      asset,      alt,      photographerName,      photographerInstagram    },    model {      name,      instagram    },    styling  }
 export type AllLooksQueryResult = Array<{
   _id: string;
   lookNumber: string | null;
-  image: {
-    asset?: SanityImageAssetReference;
-    media?: unknown;
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    alt?: string;
-    _type: "image";
-  } | null;
+  images: Array<{
+    asset: SanityImageAssetReference | null;
+    alt: string | null;
+    photographerName: string | null;
+    photographerInstagram: string | null;
+  }> | null;
   model: {
     name: string | null;
     instagram: string | null;
@@ -392,11 +393,11 @@ export type ExecutiveProducerQueryResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '\n  *[_type == "brand"] | order(order asc, name asc) {\n    _id,\n    name,\n    fullName,\n    segment,\n    instagram,\n    image\n  }\n': AllBrandsQueryResult;
+    '\n  *[_type == "brand"] | order(name asc) {\n    _id,\n    name,\n    fullName,\n    segment,\n    instagram,\n    image\n  }\n': AllBrandsQueryResult;
     '\n  *[_type == "creditGroup"] | order(order asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
     '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
-    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    image,\n    model {\n      name,\n      instagram\n    },\n    styling\n  }\n': AllLooksQueryResult;
+    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    images[]{\n      asset,\n      alt,\n      photographerName,\n      photographerInstagram\n    },\n    model {\n      name,\n      instagram\n    },\n    styling\n  }\n': AllLooksQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }

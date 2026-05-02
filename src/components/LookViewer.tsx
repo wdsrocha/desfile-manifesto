@@ -77,7 +77,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
         {look && (
           <div className="flex flex-col sm:flex-row max-h-[92vh] sm:max-h-[88vh] overflow-y-auto sm:overflow-visible">
             <LookImage
-              image={look.image}
+              image={look.images?.[0] ?? null}
               alt={`Look ${number}`}
               priority
               sizes="(min-width: 640px) 50vh, 100vw"

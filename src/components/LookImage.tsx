@@ -3,7 +3,7 @@ import { urlForImage } from "@/sanity/image";
 
 type LookImageSource = {
   asset?: { _ref?: string; _type?: string } | unknown;
-  alt?: string;
+  alt?: string | null;
 } | null;
 
 interface LookImageProps {

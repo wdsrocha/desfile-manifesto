@@ -35,3 +35,4 @@ next-env.d.ts
 
 # sanity
 schema.json
+backup-*.tar.gz

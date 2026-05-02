@@ -52,6 +52,13 @@ export function LooksSection({ looks }: LooksSectionProps) {
           <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {looks.map((look, i) => {
               const number = look.lookNumber ?? String(i + 1).padStart(2, "0");
+              const cover = look.images?.[0] ?? null;
+              if (!cover) {
+                if (typeof window !== "undefined") {
+                  console.warn(`Look ${look._id} has no images; skipping cover.`);
+                }
+                return null;
+              }
               return (
                 <li key={look._id}>
                   <button
@@ -61,7 +68,7 @@ export function LooksSection({ looks }: LooksSectionProps) {
                     aria-label={`Abrir look ${number}`}
                   >
                     <LookImage
-                      image={look.image}
+                      image={cover}
                       alt={`Look ${number}`}
                       sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                       priority={i < 4}
