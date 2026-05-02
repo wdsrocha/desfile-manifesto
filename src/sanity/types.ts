@@ -102,6 +102,28 @@ export type Brand = {
   order?: number;
 };
 
+export type Look = {
+  _id: string;
+  _type: "look";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  lookNumber?: string;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
+  model?: {
+    name?: string;
+    instagram?: string;
+  };
+  styling?: Array<string>;
+};
+
 export type NextEvent = {
   _id: string;
   _type: "nextEvent";
@@ -240,6 +262,7 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | Brand
+  | Look
   | NextEvent
   | Event
   | SanityImagePaletteSwatch
@@ -308,6 +331,27 @@ export type NextEventQueryResult = {
   location: string | null;
 } | null;
 
+// Source: src/sanity/queries/looks.ts
+// Variable: allLooksQuery
+// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    image,    model {      name,      instagram    },    styling  }
+export type AllLooksQueryResult = Array<{
+  _id: string;
+  lookNumber: string | null;
+  image: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  } | null;
+  model: {
+    name: string | null;
+    instagram: string | null;
+  } | null;
+  styling: Array<string> | null;
+}>;
+
 // Source: src/sanity/queries/people.ts
 // Variable: allModelsQuery
 // Query: *[_type == "person" && role == "model"] | order(order asc, stageName asc) {    _id,    name,    stageName,    instagram,    image  }
@@ -352,6 +396,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "creditGroup"] | order(order asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
     '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
+    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    image,\n    model {\n      name,\n      instagram\n    },\n    styling\n  }\n': AllLooksQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }
