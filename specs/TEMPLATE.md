@@ -49,9 +49,9 @@
 
 ## 7. Risks and Mitigations
 
-| Risk | Probability | Mitigation |
-| ---- | ----------- | ---------- |
-| ...  | Low/Med/High | ...       |
+| Risk | Probability  | Mitigation |
+| ---- | ------------ | ---------- |
+| ...  | Low/Med/High | ...        |
 
 ---
 
@@ -64,7 +64,7 @@
 
 | Phase | Title | Priority | Status |
 | ----- | ----- | -------- | ------ |
-| 0     | ...   | P0       | ⬜     |
+| 0     | ...   | P0       | ⬜      |
 
 ---
 
@@ -108,8 +108,8 @@
 
 ## 10. Appendix — Configuration
 
-| Variable | Environments | Value |
-| -------- | ------------ | ----- |
+| Variable | Environments           | Value       |
+| -------- | ---------------------- | ----------- |
 | `VAR`    | local + preview + prod | description |
 
 ---

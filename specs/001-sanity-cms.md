@@ -1,6 +1,6 @@
 # PRD 001 — Sanity CMS
 
-> Status: Proposta
+> Status: Done
 > Autor: Wesley Rocha
 > Data: 2026-04-27
 > Audiência: Wesley (decisor) e agentes de codificação executando fases isoladas
