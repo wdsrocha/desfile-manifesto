@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import type { AllLooksQueryResult } from "@/sanity/types";
-import { LookImage } from "./LookImage";
+import { LookCarousel } from "./LookCarousel";
 
 type Look = AllLooksQueryResult[number];
 
@@ -76,12 +76,9 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
 
         {look && (
           <div className="flex flex-col sm:flex-row max-h-[92vh] sm:max-h-[88vh] overflow-y-auto sm:overflow-visible">
-            <LookImage
-              image={look.images?.[0] ?? null}
-              alt={`Look ${number}`}
-              priority
-              sizes="(min-width: 640px) 50vh, 100vw"
-              className="aspect-[9/16] w-full sm:w-auto sm:h-[88vh] sm:flex-shrink-0"
+            <LookCarousel
+              images={look.images ?? []}
+              lookNumber={number}
             />
 
             <div className="p-6 sm:p-8 md:p-10 flex flex-col gap-6 sm:w-[min(360px,42vw)] sm:max-h-[88vh] sm:overflow-y-auto">
