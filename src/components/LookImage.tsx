@@ -12,6 +12,7 @@ interface LookImageProps {
   className?: string;
   sizes?: string;
   priority?: boolean;
+  objectFit?: "cover" | "contain";
 }
 
 export function LookImage({
@@ -20,6 +21,7 @@ export function LookImage({
   className = "",
   sizes,
   priority = false,
+  objectFit = "cover",
 }: LookImageProps) {
   const hasImage = image && (image as { asset?: unknown }).asset;
   const imageUrl = hasImage
@@ -29,10 +31,13 @@ export function LookImage({
         .url()
     : null;
 
+  const bgClass =
+    objectFit === "contain"
+      ? "bg-ink"
+      : "bg-gradient-to-br from-ink/[0.06] via-ink/[0.04] to-ink/[0.10]";
+
   return (
-    <div
-      className={`relative bg-gradient-to-br from-ink/[0.06] via-ink/[0.04] to-ink/[0.10] overflow-hidden ${className}`}
-    >
+    <div className={`relative overflow-hidden ${bgClass} ${className}`}>
       {imageUrl && (
         <Image
           src={imageUrl}
@@ -40,7 +45,7 @@ export function LookImage({
           fill
           sizes={sizes}
           priority={priority}
-          className="object-cover"
+          className={objectFit === "contain" ? "object-contain" : "object-cover"}
         />
       )}
     </div>

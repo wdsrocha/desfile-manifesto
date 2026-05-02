@@ -65,6 +65,7 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
                 priority={i === 0}
                 sizes="(min-width: 640px) 50vh, 100vw"
                 className="h-full w-full"
+                objectFit="contain"
               />
               <PhotographerCredit
                 name={img.photographerName}
