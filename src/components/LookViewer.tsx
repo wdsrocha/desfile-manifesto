@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import type { AllLooksQueryResult } from "@/sanity/types";
+import { urlForImage } from "@/sanity/image";
 import { LookCarousel } from "./LookCarousel";
 
 type Look = AllLooksQueryResult[number];
@@ -14,6 +15,16 @@ interface LookViewerProps {
 
 export function LookViewer({ look, onClose }: LookViewerProps) {
   const open = look !== null;
+
+  useEffect(() => {
+    if (!look) return;
+    for (const img of look.images ?? []) {
+      if (!img?.asset) continue;
+      const url = urlForImage(img).width(1200).quality(75).url();
+      const el = new Image();
+      el.src = url;
+    }
+  }, [look]);
 
   useEffect(() => {
     if (!open) return;
