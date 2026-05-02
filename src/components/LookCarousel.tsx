@@ -11,10 +11,9 @@ type LookImageItem = NonNullable<AllLooksQueryResult[number]["images"]>[number];
 
 interface LookCarouselProps {
   images: LookImageItem[];
-  lookNumber: string;
 }
 
-export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
+export function LookCarousel({ images }: LookCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selected, setSelected] = useState(0);
   const [snaps, setSnaps] = useState<number[]>([]);
@@ -69,7 +68,7 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
               >
                 <LookImage
                   image={img}
-                  alt={img.alt || `Look ${lookNumber} — imagem ${i + 1}`}
+                  alt={img.alt || `Imagem ${i + 1}`}
                   priority={i === 0}
                   sizes="(min-width: 640px) 50vh, 100vw"
                   className="h-full w-full"

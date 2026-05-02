@@ -40,8 +40,6 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
     };
   }, [open, onClose]);
 
-  const number = look?.lookNumber ?? "";
-
   return (
     <div
       role="dialog"
@@ -85,19 +83,9 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
 
         {look && (
           <div className="flex flex-col sm:flex-row max-h-[92vh] sm:max-h-[88vh] overflow-y-auto sm:overflow-visible">
-            <LookCarousel
-              images={look.images ?? []}
-              lookNumber={number}
-            />
+            <LookCarousel images={look.images ?? []} />
 
-            <div className="bg-cream p-6 sm:p-8 md:p-10 flex flex-col gap-6 sm:w-[min(360px,42vw)] sm:max-h-[88vh] sm:overflow-y-auto">
-              <div className="flex flex-col gap-2">
-                <span className="editorial-eyebrow">Look</span>
-                <h3 className="font-serif text-2xl sm:text-3xl leading-tight">
-                  {number}
-                </h3>
-              </div>
-
+            <div className="bg-cream px-6 pt-6 pb-10 sm:p-8 md:p-10 flex flex-col gap-6 sm:w-[min(360px,42vw)] sm:max-h-[88vh] sm:overflow-y-auto">
               <div className="flex flex-col gap-5 text-sm sm:text-base">
                 {look.model?.name && (
                   <div>
