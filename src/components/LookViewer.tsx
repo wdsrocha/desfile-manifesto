@@ -90,25 +90,27 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
                 {look.model?.name && (
                   <div>
                     <div className="editorial-eyebrow mb-1">Modelo</div>
-                    <div className="text-ink leading-snug">
-                      {look.model.name}
+                    <div className="flex items-center gap-1.5">
+                      <div className="text-ink leading-snug">
+                        {look.model.name}
+                      </div>
+                      {look.model.instagram && (
+                        <a
+                          href={`https://instagram.com/${look.model.instagram.replace(/^@/, "")}`}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="inline-block text-[13px] text-ink/60 hover:text-ink transition-colors"
+                        >
+                          {look.model.instagram}
+                        </a>
+                      )}
                     </div>
-                    {look.model.instagram && (
-                      <a
-                        href={`https://instagram.com/${look.model.instagram.replace(/^@/, "")}`}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="mt-0.5 inline-block text-[13px] text-ink/60 hover:text-ink transition-colors"
-                      >
-                        {look.model.instagram}
-                      </a>
-                    )}
                   </div>
                 )}
 
                 {look.styling && look.styling.length > 0 && (
                   <div>
-                    <div className="editorial-eyebrow mb-1">Styling</div>
+                    <div className="editorial-eyebrow mb-1">Peças</div>
                     <ul className="flex flex-col gap-1 text-ink leading-snug">
                       {look.styling.map((line, i) => (
                         <li key={i}>{line}</li>
