@@ -52,6 +52,7 @@ export function LooksSection({ looks }: LooksSectionProps) {
           <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {looks.map((look, i) => {
               const number = look.lookNumber ?? String(i + 1).padStart(2, "0");
+              const modelName = look.model?.name?.trim() ?? "";
               const cover = look.images?.[0] ?? null;
               if (!cover) {
                 if (typeof window !== "undefined") {
@@ -59,27 +60,32 @@ export function LooksSection({ looks }: LooksSectionProps) {
                 }
                 return null;
               }
+              const openLabel = modelName
+                ? `Abrir look — ${modelName}`
+                : `Abrir look ${number}`;
+              const imageAlt = modelName ? `Look — ${modelName}` : `Look ${number}`;
               return (
                 <li key={look._id}>
                   <button
                     type="button"
                     onClick={() => setActive(look)}
                     className="group block w-full text-left"
-                    aria-label={`Abrir look ${number}`}
+                    aria-label={openLabel}
                   >
                     <LookImage
                       image={cover}
-                      alt={`Look ${number}`}
+                      alt={imageAlt}
                       sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                       priority={i < 4}
                       className="aspect-[9/16] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                     />
-                    <div className="mt-2 sm:mt-3 flex items-baseline justify-between gap-2">
-                      <span className="editorial-eyebrow">{number}</span>
-                      <span className="text-[11px] text-ink/50 truncate max-w-[60%] text-right">
-                        {look.model?.name ?? ""}
-                      </span>
-                    </div>
+                    {modelName ? (
+                      <div className="mt-2 sm:mt-3">
+                        <span className="editorial-eyebrow block truncate">
+                          {modelName}
+                        </span>
+                      </div>
+                    ) : null}
                   </button>
                 </li>
               );
