@@ -62,6 +62,11 @@ export const brand = defineType({
         { field: 'name', direction: 'asc' },
       ],
     },
+    {
+      title: 'Nome (A-Z)',
+      name: 'nameAsc',
+      by: [{ field: 'name', direction: 'asc' }],
+    },
   ],
   preview: {
     select: { title: 'name', subtitle: 'segment', media: 'image' },
