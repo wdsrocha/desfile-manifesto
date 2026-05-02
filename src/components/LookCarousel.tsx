@@ -74,10 +74,7 @@ export function LookCarousel({ images }: LookCarouselProps) {
                   className="h-full w-full"
                   objectFit={fit}
                 />
-                <PhotographerCredit
-                  name={img.photographer?.stageName ?? img.photographer?.name}
-                  instagram={img.photographer?.instagram}
-                />
+                <PhotographerCredit instagram={img.photographer?.instagram} />
               </div>
             );
           })}
