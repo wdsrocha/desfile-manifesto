@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { AllLooksQueryResult } from "@/sanity/types";
 import { LookImage } from "./LookImage";
+import { PhotographerCredit } from "./PhotographerCredit";
 
 type LookImageItem = NonNullable<AllLooksQueryResult[number]["images"]>[number];
 
@@ -65,6 +66,10 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
                 sizes="(min-width: 640px) 50vh, 100vw"
                 className="h-full w-full"
               />
+              <PhotographerCredit
+                name={img.photographerName}
+                instagram={img.photographerInstagram}
+              />
             </div>
           ))}
         </div>
@@ -89,7 +94,7 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
             <ChevronRight size={18} strokeWidth={1.5} />
           </button>
 
-          <div className="absolute bottom-3 left-0 right-0 z-20 flex justify-center gap-1.5 pointer-events-none">
+          <div className="absolute bottom-10 sm:bottom-12 left-0 right-0 z-20 flex justify-center gap-1.5 pointer-events-none">
             {snaps.map((_, i) => (
               <button
                 key={i}
