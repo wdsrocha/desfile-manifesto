@@ -102,6 +102,34 @@ export type Brand = {
   order?: number;
 };
 
+export type NextEvent = {
+  _id: string;
+  _type: "nextEvent";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  edition?: string;
+  date?: string;
+  location?: string;
+};
+
+export type Event = {
+  _id: string;
+  _type: "event";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  edition?: string;
+  humanDate?: string;
+  displayDate?: string;
+  isoDate?: string;
+  location?: string;
+  concept?: string;
+  intro?: string;
+  longDescription?: string;
+};
+
 export type SanityImagePaletteSwatch = {
   _type: "sanity.imagePaletteSwatch";
   background?: string;
@@ -212,6 +240,8 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | Brand
+  | NextEvent
+  | Event
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
@@ -253,6 +283,30 @@ export type AllCreditGroupsQueryResult = Array<{
     instagram: string | null;
   }> | null;
 }>;
+
+// Source: src/sanity/queries/event.ts
+// Variable: currentEventQuery
+// Query: *[_type == "event"] | order(_createdAt asc) [0] {    name,    edition,    humanDate,    displayDate,    isoDate,    location,    concept,    intro,    longDescription  }
+export type CurrentEventQueryResult = {
+  name: string | null;
+  edition: string | null;
+  humanDate: string | null;
+  displayDate: string | null;
+  isoDate: string | null;
+  location: string | null;
+  concept: string | null;
+  intro: string | null;
+  longDescription: string | null;
+} | null;
+
+// Source: src/sanity/queries/event.ts
+// Variable: nextEventQuery
+// Query: *[_type == "nextEvent"] | order(_createdAt asc) [0] {    edition,    date,    location  }
+export type NextEventQueryResult = {
+  edition: string | null;
+  date: string | null;
+  location: string | null;
+} | null;
 
 // Source: src/sanity/queries/people.ts
 // Variable: allModelsQuery
@@ -296,6 +350,8 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "brand"] | order(order asc, name asc) {\n    _id,\n    name,\n    fullName,\n    segment,\n    instagram,\n    image\n  }\n': AllBrandsQueryResult;
     '\n  *[_type == "creditGroup"] | order(order asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
+    '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
+    '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }
