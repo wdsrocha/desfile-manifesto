@@ -53,9 +53,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
         type="button"
         aria-label="Fechar"
         onClick={onClose}
-        className={`absolute inset-0 bg-ink/70 backdrop-blur-sm transition-opacity duration-300 ${
-          open ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute inset-0 bg-ink/70 backdrop-blur-sm transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       />
 
       <div
@@ -64,7 +62,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
           sm:left-1/2 sm:right-auto sm:bottom-auto sm:top-1/2
           sm:-translate-x-1/2 sm:-translate-y-1/2
           sm:max-h-[88vh] sm:w-auto sm:max-w-[min(880px,94vw)]
-          bg-cream text-ink shadow-2xl
+          bg-ink sm:bg-cream text-ink shadow-2xl
           rounded-t-2xl sm:rounded-2xl
           overflow-hidden
           transition-transform duration-300 ease-out
@@ -82,7 +80,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
         </button>
 
         <div className="sm:hidden flex justify-center pt-2">
-          <span className="h-1 w-10 rounded-full bg-ink/15" />
+          <span className="h-1 w-10 rounded-full bg-cream/30" />
         </div>
 
         {look && (
@@ -92,7 +90,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
               lookNumber={number}
             />
 
-            <div className="p-6 sm:p-8 md:p-10 flex flex-col gap-6 sm:w-[min(360px,42vw)] sm:max-h-[88vh] sm:overflow-y-auto">
+            <div className="bg-cream p-6 sm:p-8 md:p-10 flex flex-col gap-6 sm:w-[min(360px,42vw)] sm:max-h-[88vh] sm:overflow-y-auto">
               <div className="flex flex-col gap-2">
                 <span className="editorial-eyebrow">Look</span>
                 <h3 className="font-serif text-2xl sm:text-3xl leading-tight">

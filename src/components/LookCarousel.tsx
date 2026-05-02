@@ -51,7 +51,7 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
   const multiple = images.length > 1;
 
   return (
-    <div className="relative aspect-[9/16] w-full sm:w-auto sm:h-[88vh] sm:flex-shrink-0 sm:aspect-[9/16] group/carousel">
+    <div className="relative h-[58vh] w-full bg-ink sm:w-auto sm:h-[88vh] sm:flex-shrink-0 sm:aspect-[9/16] group/carousel">
       <div ref={emblaRef} className="overflow-hidden h-full">
         <div className="flex h-full">
           {images.map((img, i) => (
