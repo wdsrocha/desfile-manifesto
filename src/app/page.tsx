@@ -2,6 +2,10 @@ import { client } from "@/sanity/client";
 import { allBrandsQuery } from "@/sanity/queries/brands";
 import { allCreditGroupsQuery } from "@/sanity/queries/credits";
 import {
+  currentEventQuery,
+  nextEventQuery,
+} from "@/sanity/queries/event";
+import {
   allModelsQuery,
   executiveProducerQuery,
 } from "@/sanity/queries/people";
@@ -14,24 +18,31 @@ import { CreditsSection } from "@/components/CreditsSection";
 import { Footer } from "@/components/Footer";
 
 export default async function Home() {
-  const [brands, models, executiveProducer, creditGroups] = await Promise.all([
-    client.fetch(allBrandsQuery),
-    client.fetch(allModelsQuery),
-    client.fetch(executiveProducerQuery),
-    client.fetch(allCreditGroupsQuery),
-  ]);
+  const [event, nextEvent, brands, models, executiveProducer, creditGroups] =
+    await Promise.all([
+      client.fetch(currentEventQuery),
+      client.fetch(nextEventQuery),
+      client.fetch(allBrandsQuery),
+      client.fetch(allModelsQuery),
+      client.fetch(executiveProducerQuery),
+      client.fetch(allCreditGroupsQuery),
+    ]);
 
   return (
     <>
       <main>
-        <Hero />
+        <Hero event={event} />
         <LooksSection />
-        <AboutSection executiveProducer={executiveProducer} />
+        <AboutSection
+          event={event}
+          nextEvent={nextEvent}
+          executiveProducer={executiveProducer}
+        />
         <BrandsSection brands={brands} />
         <ModelsSection models={models} />
         <CreditsSection groups={creditGroups} />
       </main>
-      <Footer />
+      <Footer event={event} />
     </>
   );
 }

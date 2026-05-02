@@ -1,15 +1,24 @@
 import Image from "next/image";
-import { evento, proximoDesfile } from "@/lib/data";
-import type { ExecutiveProducerQueryResult } from "@/sanity/types";
+import type {
+  CurrentEventQueryResult,
+  ExecutiveProducerQueryResult,
+  NextEventQueryResult,
+} from "@/sanity/types";
 import { urlForImage } from "@/sanity/image";
 import { instagramUrl } from "@/lib/instagram";
 import { SectionHeader } from "./SectionHeader";
 
 interface AboutSectionProps {
+  event: CurrentEventQueryResult;
+  nextEvent: NextEventQueryResult;
   executiveProducer: ExecutiveProducerQueryResult;
 }
 
-export function AboutSection({ executiveProducer }: AboutSectionProps) {
+export function AboutSection({
+  event,
+  nextEvent,
+  executiveProducer,
+}: AboutSectionProps) {
   const producerName =
     executiveProducer?.stageName || executiveProducer?.name || "";
   const producerImage = executiveProducer?.image?.asset
@@ -26,47 +35,67 @@ export function AboutSection({ executiveProducer }: AboutSectionProps) {
           <SectionHeader title="Sobre o evento" />
 
           <div className="mt-3 max-w-2xl flex flex-col gap-4 text-ink/70 text-sm sm:text-base leading-relaxed">
-            <p>{evento.intro}</p>
-            <p>{evento.descricaoLonga}</p>
+            {event?.intro && <p>{event.intro}</p>}
+            {event?.longDescription && <p>{event.longDescription}</p>}
           </div>
 
           <dl className="mt-10 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
-            <div>
-              <dt className="editorial-eyebrow mb-1">Edição</dt>
-              <dd>{evento.edicao}</dd>
-            </div>
-            <div>
-              <dt className="editorial-eyebrow mb-1">Data</dt>
-              <dd>
-                <time dateTime={evento.dataISO}>
-                  <span className="sm:hidden">{evento.dataPtBr}</span>
-                  <span className="hidden sm:inline">{evento.dataLegivel}</span>
-                </time>
-              </dd>
-            </div>
-            <div>
-              <dt className="editorial-eyebrow mb-1">Local</dt>
-              <dd>{evento.local}</dd>
-            </div>
-          </dl>
-
-          <div className="mt-10 pt-8 border-t border-ink/10">
-            <span className="editorial-eyebrow">Próximo desfile</span>
-            <dl className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
+            {event?.edition && (
               <div>
                 <dt className="editorial-eyebrow mb-1">Edição</dt>
-                <dd>{proximoDesfile.edicao}</dd>
+                <dd>{event.edition}</dd>
               </div>
+            )}
+            {(event?.humanDate || event?.displayDate) && (
               <div>
                 <dt className="editorial-eyebrow mb-1">Data</dt>
-                <dd>{proximoDesfile.data}</dd>
+                <dd>
+                  <time dateTime={event.isoDate ?? undefined}>
+                    {event.displayDate && (
+                      <span className="sm:hidden">{event.displayDate}</span>
+                    )}
+                    {event.humanDate && (
+                      <span className="hidden sm:inline">
+                        {event.humanDate}
+                      </span>
+                    )}
+                  </time>
+                </dd>
               </div>
+            )}
+            {event?.location && (
               <div>
                 <dt className="editorial-eyebrow mb-1">Local</dt>
-                <dd>{proximoDesfile.local}</dd>
+                <dd>{event.location}</dd>
               </div>
-            </dl>
-          </div>
+            )}
+          </dl>
+
+          {nextEvent && (
+            <div className="mt-10 pt-8 border-t border-ink/10">
+              <span className="editorial-eyebrow">Próximo desfile</span>
+              <dl className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6 text-sm">
+                {nextEvent.edition && (
+                  <div>
+                    <dt className="editorial-eyebrow mb-1">Edição</dt>
+                    <dd>{nextEvent.edition}</dd>
+                  </div>
+                )}
+                {nextEvent.date && (
+                  <div>
+                    <dt className="editorial-eyebrow mb-1">Data</dt>
+                    <dd>{nextEvent.date}</dd>
+                  </div>
+                )}
+                {nextEvent.location && (
+                  <div>
+                    <dt className="editorial-eyebrow mb-1">Local</dt>
+                    <dd>{nextEvent.location}</dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          )}
         </div>
 
         {executiveProducer && (
