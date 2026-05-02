@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { AllLooksQueryResult } from "@/sanity/types";
@@ -18,8 +18,6 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selected, setSelected] = useState(0);
   const [snaps, setSnaps] = useState<number[]>([]);
-  const frameRef = useRef<HTMLDivElement>(null);
-  const [frameRatio, setFrameRatio] = useState<number | null>(null);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -42,20 +40,6 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
   }, [emblaApi]);
 
   useEffect(() => {
-    const el = frameRef.current;
-    if (!el) return;
-    const update = () => {
-      const w = el.clientWidth;
-      const h = el.clientHeight;
-      if (w > 0 && h > 0) setFrameRatio(w / h);
-    };
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") scrollPrev();
       else if (e.key === "ArrowRight") scrollNext();
@@ -67,18 +51,15 @@ export function LookCarousel({ images, lookNumber }: LookCarouselProps) {
   const multiple = images.length > 1;
 
   return (
-    <div
-      ref={frameRef}
-      className="relative h-[58vh] w-full bg-ink sm:w-auto sm:h-[88vh] sm:flex-shrink-0 sm:aspect-[2/3] group/carousel"
-    >
+    <div className="relative aspect-[9/16] w-full bg-ink sm:w-auto sm:h-[88vh] sm:flex-shrink-0 sm:aspect-[9/16] group/carousel">
       <div ref={emblaRef} className="overflow-hidden h-full">
         <div className="flex h-full">
           {images.map((img, i) => {
             const imageRatio = img.asset?.metadata?.dimensions?.aspectRatio;
             const fit: "cover" | "contain" =
-              frameRatio !== null &&
               typeof imageRatio === "number" &&
-              imageRatio < frameRatio
+              imageRatio > 9 / 16 &&
+              imageRatio < 1
                 ? "cover"
                 : "contain";
             return (
