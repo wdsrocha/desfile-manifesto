@@ -15,12 +15,6 @@ export const creditGroup = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'order',
-      title: 'Ordem',
-      type: 'number',
-      description: 'Menor aparece primeiro na seção de créditos.',
-    }),
-    defineField({
       name: 'entries',
       title: 'Pessoas',
       type: 'array',
@@ -55,9 +49,9 @@ export const creditGroup = defineType({
   ],
   orderings: [
     {
-      title: 'Manual (ordem asc)',
-      name: 'orderAsc',
-      by: [{ field: 'order', direction: 'asc' }],
+      title: 'Título (A-Z)',
+      name: 'titleAsc',
+      by: [{ field: 'title', direction: 'asc' }],
     },
   ],
   preview: {

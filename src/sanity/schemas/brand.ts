@@ -46,22 +46,8 @@ export const brand = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'order',
-      title: 'Ordem',
-      type: 'number',
-      description: 'Menor aparece primeiro na grade.',
-    }),
   ],
   orderings: [
-    {
-      title: 'Manual (ordem asc)',
-      name: 'orderAsc',
-      by: [
-        { field: 'order', direction: 'asc' },
-        { field: 'name', direction: 'asc' },
-      ],
-    },
     {
       title: 'Nome (A-Z)',
       name: 'nameAsc',

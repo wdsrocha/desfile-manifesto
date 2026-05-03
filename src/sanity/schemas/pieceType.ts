@@ -14,28 +14,20 @@ export const pieceType = defineType({
       description: 'Nome exibido no site (ex.: Camisa). Em PT-BR, singular.',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'order',
-      title: 'Ordem',
-      type: 'number',
-      description: 'Menor aparece primeiro no picker.',
-    }),
   ],
   orderings: [
     {
-      title: 'Por ordem (asc)',
-      name: 'orderAsc',
-      by: [{ field: 'order', direction: 'asc' }],
+      title: 'Nome (A-Z)',
+      name: 'nameAsc',
+      by: [{ field: 'name', direction: 'asc' }],
     },
   ],
   preview: {
     select: {
       title: 'name',
-      subtitle: 'order',
     },
-    prepare: ({ title, subtitle }) => ({
+    prepare: ({ title }) => ({
       title: title ?? 'Tipo de peça',
-      subtitle: subtitle != null ? `Ordem: ${subtitle}` : undefined,
     }),
   },
 })

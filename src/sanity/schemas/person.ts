@@ -55,20 +55,13 @@ export const person = defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'order',
-      title: 'Ordem',
-      type: 'number',
-      description: 'Menor aparece primeiro dentro do mesmo papel.',
-    }),
   ],
   orderings: [
     {
-      title: 'Por papel + ordem',
-      name: 'roleOrderAsc',
+      title: 'Por papel + nome artístico',
+      name: 'roleStageNameAsc',
       by: [
         { field: 'role', direction: 'asc' },
-        { field: 'order', direction: 'asc' },
         { field: 'stageName', direction: 'asc' },
       ],
     },
