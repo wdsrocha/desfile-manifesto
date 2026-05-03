@@ -1,9 +1,8 @@
 import { defineQuery } from 'next-sanity'
 
 export const allLooksQuery = defineQuery(`
-  *[_type == "look"] | order(lookNumber asc) {
+  *[_type == "look"] | order(orderRank asc) {
     _id,
-    lookNumber,
     images[]{
       hotspot,
       crop,
@@ -32,7 +31,7 @@ export const allLooksQuery = defineQuery(`
     },
     pieces[]{
       _key,
-      slot->{ _id, name, order },
+      slot->{ _id, name },
       brands[]->{ _id, name, instagram }
     }
   }

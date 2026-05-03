@@ -51,7 +51,6 @@ export function LooksSection({ looks }: LooksSectionProps) {
         ) : (
           <ul className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {looks.map((look, i) => {
-              const number = look.lookNumber ?? String(i + 1).padStart(2, "0");
               const modelName = look.model?.name?.trim() ?? "";
               const cover = look.images?.[0] ?? null;
               if (!cover) {
@@ -60,10 +59,8 @@ export function LooksSection({ looks }: LooksSectionProps) {
                 }
                 return null;
               }
-              const openLabel = modelName
-                ? `Abrir look — ${modelName}`
-                : `Abrir look ${number}`;
-              const imageAlt = modelName ? `Look — ${modelName}` : `Look ${number}`;
+              const openLabel = modelName ? `Abrir look — ${modelName}` : "Abrir look";
+              const imageAlt = modelName ? `Look — ${modelName}` : "Look";
               return (
                 <li key={look._id}>
                   <button
