@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { ImageIcon } from '@sanity/icons'
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 
 export const look = defineType({
   name: 'look',
@@ -7,17 +8,7 @@ export const look = defineType({
   type: 'document',
   icon: ImageIcon,
   fields: [
-    defineField({
-      name: 'lookNumber',
-      title: 'Número do look',
-      type: 'string',
-      description: 'Ex.: "01", "02". Usado para ordenar e exibir.',
-      validation: (Rule) =>
-        Rule.required().regex(/^\d{2,}$/, {
-          name: 'twoDigits',
-          invert: false,
-        }),
-    }),
+    orderRankField({ type: 'look', hidden: true }),
     defineField({
       name: 'images',
       title: 'Imagens',
@@ -109,22 +100,14 @@ export const look = defineType({
       ],
     }),
   ],
-  orderings: [
-    {
-      title: 'Por número (asc)',
-      name: 'lookNumberAsc',
-      by: [{ field: 'lookNumber', direction: 'asc' }],
-    },
-  ],
+  orderings: [orderRankOrdering],
   preview: {
     select: {
-      title: 'lookNumber',
-      subtitle: 'model.name',
+      title: 'model.name',
       media: 'images.0',
     },
-    prepare: ({ title, subtitle, media }) => ({
-      title: title ? `Look ${title}` : 'Look',
-      subtitle: subtitle ?? undefined,
+    prepare: ({ title, media }) => ({
+      title: title ? `Look — ${title}` : 'Look',
       media,
     }),
   },
