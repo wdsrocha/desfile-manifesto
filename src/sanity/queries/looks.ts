@@ -28,6 +28,11 @@ export const allLooksQuery = defineQuery(`
       name,
       instagram
     },
-    styling
+    styling,
+    pieces[]{
+      _key,
+      slot->{ _id, name, order },
+      brands[]->{ _id, name, instagram }
+    }
   }
 `)
