@@ -64,13 +64,6 @@ export const look = defineType({
       ],
     }),
     defineField({
-      name: 'styling',
-      title: 'Styling',
-      type: 'array',
-      of: [{ type: 'string' }],
-      description: 'Uma peça por linha. Ex.: "Camisa: Melanina".',
-    }),
-    defineField({
       name: 'pieces',
       title: 'Peças',
       type: 'array',

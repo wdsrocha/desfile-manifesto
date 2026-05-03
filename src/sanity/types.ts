@@ -117,7 +117,6 @@ export type Look = {
     name?: string;
     instagram?: string;
   };
-  styling?: Array<string>;
   pieces?: Array<{
     slot?: PieceTypeReference;
     brands?: Array<
@@ -380,7 +379,7 @@ export type NextEventQueryResult = {
 
 // Source: src/sanity/queries/looks.ts
 // Variable: allLooksQuery
-// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    images[]{      asset->{        _id,        _type,        metadata {          dimensions {            width,            height,            aspectRatio          }        }      },      alt,      photographer->{        _id,        name,        stageName,        instagram      }    },    model {      name,      instagram    },    styling,    pieces[]{      _key,      slot->{ _id, name, order },      brands[]->{ _id, name, instagram }    }  }
+// Query: *[_type == "look"] | order(lookNumber asc) {    _id,    lookNumber,    images[]{      asset->{        _id,        _type,        metadata {          dimensions {            width,            height,            aspectRatio          }        }      },      alt,      photographer->{        _id,        name,        stageName,        instagram      }    },    model {      name,      instagram    },    pieces[]{      _key,      slot->{ _id, name, order },      brands[]->{ _id, name, instagram }    }  }
 export type AllLooksQueryResult = Array<{
   _id: string;
   lookNumber: string | null;
@@ -408,7 +407,6 @@ export type AllLooksQueryResult = Array<{
     name: string | null;
     instagram: string | null;
   } | null;
-  styling: Array<string> | null;
   pieces: Array<{
     _key: string;
     slot: {
@@ -468,7 +466,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "creditGroup"] | order(order asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
     '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
-    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    images[]{\n      asset->{\n        _id,\n        _type,\n        metadata {\n          dimensions {\n            width,\n            height,\n            aspectRatio\n          }\n        }\n      },\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    styling,\n    pieces[]{\n      _key,\n      slot->{ _id, name, order },\n      brands[]->{ _id, name, instagram }\n    }\n  }\n': AllLooksQueryResult;
+    '\n  *[_type == "look"] | order(lookNumber asc) {\n    _id,\n    lookNumber,\n    images[]{\n      asset->{\n        _id,\n        _type,\n        metadata {\n          dimensions {\n            width,\n            height,\n            aspectRatio\n          }\n        }\n      },\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    pieces[]{\n      _key,\n      slot->{ _id, name, order },\n      brands[]->{ _id, name, instagram }\n    }\n  }\n': AllLooksQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(order asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
   }
