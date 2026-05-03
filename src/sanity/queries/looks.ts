@@ -5,6 +5,8 @@ export const allLooksQuery = defineQuery(`
     _id,
     lookNumber,
     images[]{
+      hotspot,
+      crop,
       asset->{
         _id,
         _type,
