@@ -9,5 +9,5 @@ export const client = createClient({
   apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
   useCdn: !isDev,
   perspective: isDev ? 'previewDrafts' : 'published',
-  token: isDev ? env.SANITY_API_READ_TOKEN : undefined,
+  token: env.SANITY_API_READ_TOKEN,
 })
