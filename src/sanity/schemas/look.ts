@@ -1,5 +1,6 @@
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 import { ImageIcon } from '@sanity/icons'
+import { SLOT_LABELS, SLOT_OPTIONS, type SlotValue } from '@/lib/slot-labels'
 
 export const look = defineType({
   name: 'look',
@@ -69,6 +70,56 @@ export const look = defineType({
       type: 'array',
       of: [{ type: 'string' }],
       description: 'Uma peça por linha. Ex.: "Camisa: Melanina".',
+    }),
+    defineField({
+      name: 'pieces',
+      title: 'Peças',
+      type: 'array',
+      description:
+        'Cada peça do look com sua(s) marca(s). Slots vazios não aparecem no site.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'piece',
+          fields: [
+            defineField({
+              name: 'slot',
+              title: 'Slot',
+              type: 'string',
+              options: {
+                list: SLOT_OPTIONS,
+                layout: 'radio',
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'brands',
+              title: 'Marcas',
+              type: 'array',
+              of: [{ type: 'reference', to: [{ type: 'brand' }] }],
+              validation: (Rule) => Rule.min(1),
+            }),
+          ],
+          preview: {
+            select: {
+              slot: 'slot',
+              brand0: 'brands.0.name',
+              brand1: 'brands.1.name',
+              brand2: 'brands.2.name',
+            },
+            prepare: ({ slot, brand0, brand1, brand2 }) => {
+              const label = slot
+                ? (SLOT_LABELS[slot as SlotValue] ?? slot)
+                : 'Peça'
+              const names = [brand0, brand1, brand2].filter(Boolean)
+              const subtitle = names.length
+                ? names.join(' · ')
+                : 'sem marca'
+              return { title: label, subtitle }
+            },
+          },
+        }),
+      ],
     }),
   ],
   orderings: [

@@ -82,6 +82,13 @@ export type PersonReference = {
   [internalGroqTypeReferenceTo]?: "person";
 };
 
+export type BrandReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "brand";
+};
+
 export type Look = {
   _id: string;
   _type: "look";
@@ -104,6 +111,16 @@ export type Look = {
     instagram?: string;
   };
   styling?: Array<string>;
+  pieces?: Array<{
+    slot?: "shirt" | "shorts" | "necklace" | "hat";
+    brands?: Array<
+      {
+        _key: string;
+      } & BrandReference
+    >;
+    _type: "piece";
+    _key: string;
+  }>;
 };
 
 export type Person = {
@@ -271,6 +288,7 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | PersonReference
+  | BrandReference
   | Look
   | Person
   | NextEvent
