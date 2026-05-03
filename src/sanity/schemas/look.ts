@@ -1,6 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { ImageIcon } from '@sanity/icons'
-import { SLOT_LABELS, SLOT_OPTIONS, type SlotValue } from '@/lib/slot-labels'
 
 export const look = defineType({
   name: 'look',
@@ -84,11 +83,11 @@ export const look = defineType({
           fields: [
             defineField({
               name: 'slot',
-              title: 'Slot',
-              type: 'string',
+              title: 'Tipo de peça',
+              type: 'reference',
+              to: [{ type: 'pieceType' }],
               options: {
-                list: SLOT_OPTIONS,
-                layout: 'radio',
+                disableNew: false,
               },
               validation: (Rule) => Rule.required(),
             }),
@@ -102,20 +101,15 @@ export const look = defineType({
           ],
           preview: {
             select: {
-              slot: 'slot',
+              slotName: 'slot.name',
               brand0: 'brands.0.name',
               brand1: 'brands.1.name',
               brand2: 'brands.2.name',
             },
-            prepare: ({ slot, brand0, brand1, brand2 }) => {
-              const label = slot
-                ? (SLOT_LABELS[slot as SlotValue] ?? slot)
-                : 'Peça'
+            prepare: ({ slotName, brand0, brand1, brand2 }) => {
               const names = [brand0, brand1, brand2].filter(Boolean)
-              const subtitle = names.length
-                ? names.join(' · ')
-                : 'sem marca'
-              return { title: label, subtitle }
+              const subtitle = names.length ? names.join(' · ') : 'sem marca'
+              return { title: slotName ?? 'Peça', subtitle }
             },
           },
         }),
