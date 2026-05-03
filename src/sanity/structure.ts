@@ -1,9 +1,10 @@
 import type { StructureResolver } from 'sanity/structure'
 import { CalendarIcon } from '@sanity/icons'
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 
 const SINGLETONS = ['event', 'nextEvent']
 
-export const structure: StructureResolver = (S) =>
+export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Conteúdo')
     .items([
@@ -26,7 +27,8 @@ export const structure: StructureResolver = (S) =>
             .filter('_type == "nextEvent"'),
         ),
       S.divider(),
+      orderableDocumentListDeskItem({ type: 'look', title: 'Looks', S, context }),
       ...S.documentTypeListItems().filter(
-        (item) => !SINGLETONS.includes(item.getId() ?? ''),
+        (item) => !([...SINGLETONS, 'look']).includes(item.getId() ?? ''),
       ),
     ])
