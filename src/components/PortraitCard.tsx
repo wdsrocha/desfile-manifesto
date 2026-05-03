@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { urlForImage } from "@/sanity/image";
+import { urlForImage, IMAGE_QUALITY } from "@/sanity/image";
 import { instagramUrl } from "@/lib/instagram";
 import { InstagramIcon } from "./BrandIcons";
 
@@ -26,7 +26,7 @@ export function PortraitCard({
     ? urlForImage(image as Parameters<typeof urlForImage>[0])
         .width(600)
         .height(800)
-        .quality(75)
+        .quality(IMAGE_QUALITY)
         .url()
     : null;
 

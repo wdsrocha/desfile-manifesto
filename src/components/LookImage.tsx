@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { urlForImage } from "@/sanity/image";
+import { urlForImage, IMAGE_QUALITY } from "@/sanity/image";
 
 type LookImageSource = {
   asset?: { _ref?: string; _type?: string } | unknown;
@@ -34,11 +34,11 @@ export function LookImage({
           .width(COVER_CROP_WIDTH)
           .height(Math.round(COVER_CROP_WIDTH * aspectRatio[1] / aspectRatio[0]))
           .fit("crop")
-          .quality(75)
+          .quality(IMAGE_QUALITY)
           .url()
       : urlForImage(image as Parameters<typeof urlForImage>[0])
           .width(1200)
-          .quality(75)
+          .quality(IMAGE_QUALITY)
           .url()
     : null;
 
