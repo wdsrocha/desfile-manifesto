@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { AllLooksQueryResult } from "@/sanity/types";
 import { urlForImage, IMAGE_QUALITY } from "@/sanity/image";
 import { SectionHeader } from "./SectionHeader";
@@ -15,6 +15,23 @@ interface LooksSectionProps {
 
 export function LooksSection({ looks }: LooksSectionProps) {
   const [active, setActive] = useState<Look | null>(null);
+
+  useEffect(() => {
+    const prefetchCovers = () => {
+      for (const look of looks) {
+        const cover = look.images?.[0];
+        if (!cover?.asset) continue;
+        const el = new window.Image();
+        el.src = urlForImage(cover).width(1200).quality(IMAGE_QUALITY).url();
+      }
+    };
+    if (typeof requestIdleCallback !== "undefined") {
+      const id = requestIdleCallback(prefetchCovers, { timeout: 3000 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = setTimeout(prefetchCovers, 3000);
+    return () => clearTimeout(id);
+  }, [looks]);
 
   const prefetchModal = useCallback((look: Look) => {
     for (const img of look.images ?? []) {
