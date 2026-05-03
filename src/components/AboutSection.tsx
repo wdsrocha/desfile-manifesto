@@ -24,6 +24,7 @@ export function AboutSection({
   const producerImage = executiveProducer?.image?.asset
     ? urlForImage(executiveProducer.image).width(160).height(160).url()
     : null;
+  const producerLqip = executiveProducer?.image?.lqip ?? undefined;
 
   return (
     <section
@@ -108,6 +109,8 @@ export function AboutSection({
                     alt={producerName}
                     fill
                     sizes="80px"
+                    placeholder={producerLqip ? "blur" : "empty"}
+                    blurDataURL={producerLqip}
                     className="object-cover"
                   />
                 </div>

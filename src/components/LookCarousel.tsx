@@ -73,6 +73,7 @@ export function LookCarousel({ images }: LookCarouselProps) {
                   sizes="(min-width: 640px) 50vh, 100vw"
                   className="h-full w-full"
                   objectFit={fit}
+                  blurDataURL={img.asset?.metadata?.lqip ?? undefined}
                 />
                 <PhotographerCredit instagram={img.photographer?.instagram} />
               </div>

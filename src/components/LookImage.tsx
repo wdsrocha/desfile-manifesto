@@ -16,6 +16,7 @@ interface LookImageProps {
   priority?: boolean;
   objectFit?: "cover" | "contain";
   aspectRatio?: [number, number];
+  blurDataURL?: string;
 }
 
 export function LookImage({
@@ -26,6 +27,7 @@ export function LookImage({
   priority = false,
   objectFit = "cover",
   aspectRatio,
+  blurDataURL,
 }: LookImageProps) {
   const hasImage = image && (image as { asset?: unknown }).asset;
   const imageUrl = hasImage
@@ -56,6 +58,8 @@ export function LookImage({
           fill
           sizes={sizes}
           priority={priority}
+          placeholder={blurDataURL ? "blur" : "empty"}
+          blurDataURL={blurDataURL}
           className={objectFit === "contain" ? "object-contain" : "object-cover"}
         />
       )}

@@ -15,6 +15,7 @@ export const allLooksQuery = defineQuery(`
             height,
             aspectRatio
           }
+          lqip
         }
       },
       alt,

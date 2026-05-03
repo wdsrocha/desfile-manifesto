@@ -5,7 +5,8 @@ import { InstagramIcon } from "./BrandIcons";
 
 type PersonImage = {
   asset?: { _ref?: string; _type?: string } | unknown;
-  alt?: string;
+  alt?: string | null;
+  lqip?: string | null;
 } | null;
 
 interface PortraitCardProps {
@@ -29,6 +30,7 @@ export function PortraitCard({
         .quality(IMAGE_QUALITY)
         .url()
     : null;
+  const lqip = image?.lqip ?? undefined;
 
   const content = (
     <>
@@ -40,6 +42,8 @@ export function PortraitCard({
             fill
             sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
             priority={priority}
+            placeholder={lqip ? "blur" : "empty"}
+            blurDataURL={lqip}
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           />
         )}

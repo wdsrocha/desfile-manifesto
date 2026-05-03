@@ -390,6 +390,7 @@ export type AllLooksQueryResult = Array<{
           height: number | null;
           aspectRatio: number | null;
         } | null;
+        lqip: string | null;
       } | null;
     } | null;
     alt: string | null;
@@ -420,7 +421,7 @@ export type AllLooksQueryResult = Array<{
 
 // Source: src/sanity/queries/people.ts
 // Variable: allModelsQuery
-// Query: *[_type == "person" && role == "model"] | order(stageName asc) {    _id,    name,    stageName,    instagram,    image  }
+// Query: *[_type == "person" && role == "model"] | order(stageName asc) {    _id,    name,    stageName,    instagram,    image {      ...,      "lqip": asset->metadata.lqip    }  }
 export type AllModelsQueryResult = Array<{
   _id: string;
   name: string | null;
@@ -433,12 +434,13 @@ export type AllModelsQueryResult = Array<{
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
+    lqip: string | null;
   } | null;
 }>;
 
 // Source: src/sanity/queries/people.ts
 // Variable: executiveProducerQuery
-// Query: *[_type == "person" && role == "production"] | order(stageName asc) [0] {    _id,    name,    stageName,    instagram,    image  }
+// Query: *[_type == "person" && role == "production"] | order(stageName asc) [0] {    _id,    name,    stageName,    instagram,    image {      ...,      "lqip": asset->metadata.lqip    }  }
 export type ExecutiveProducerQueryResult = {
   _id: string;
   name: string | null;
@@ -451,6 +453,7 @@ export type ExecutiveProducerQueryResult = {
     crop?: SanityImageCrop;
     alt?: string;
     _type: "image";
+    lqip: string | null;
   } | null;
 } | null;
 
@@ -462,8 +465,8 @@ declare module "@sanity/client" {
     '\n  *[_type == "creditGroup"] | order(title asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
     '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
-    '\n  *[_type == "look"] | order(orderRank asc) {\n    _id,\n    images[]{\n      hotspot,\n      crop,\n      asset->{\n        _id,\n        _type,\n        metadata {\n          dimensions {\n            width,\n            height,\n            aspectRatio\n          }\n        }\n      },\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    pieces[]{\n      _key,\n      slot->{ _id, name },\n      brands[]->{ _id, name, instagram }\n    }\n  }\n': AllLooksQueryResult;
-    '\n  *[_type == "person" && role == "model"] | order(stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': AllModelsQueryResult;
-    '\n  *[_type == "person" && role == "production"] | order(stageName asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image\n  }\n': ExecutiveProducerQueryResult;
+    '\n  *[_type == "look"] | order(orderRank asc) {\n    _id,\n    images[]{\n      hotspot,\n      crop,\n      asset->{\n        _id,\n        _type,\n        metadata {\n          dimensions {\n            width,\n            height,\n            aspectRatio\n          }\n          lqip\n        }\n      },\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    pieces[]{\n      _key,\n      slot->{ _id, name },\n      brands[]->{ _id, name, instagram }\n    }\n  }\n': AllLooksQueryResult;
+    '\n  *[_type == "person" && role == "model"] | order(stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image {\n      ...,\n      "lqip": asset->metadata.lqip\n    }\n  }\n': AllModelsQueryResult;
+    '\n  *[_type == "person" && role == "production"] | order(stageName asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image {\n      ...,\n      "lqip": asset->metadata.lqip\n    }\n  }\n': ExecutiveProducerQueryResult;
   }
 }

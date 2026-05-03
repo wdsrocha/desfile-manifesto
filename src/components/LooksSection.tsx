@@ -104,6 +104,7 @@ export function LooksSection({ looks }: LooksSectionProps) {
                       priority={i < 4}
                       className="aspect-[9/16] transition-transform duration-500 ease-out group-hover:scale-[1.02]"
                       aspectRatio={[9, 16]}
+                      blurDataURL={cover.asset?.metadata?.lqip ?? undefined}
                     />
                     {modelName ? (
                       <div className="mt-2 sm:mt-3">

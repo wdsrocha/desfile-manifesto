@@ -6,7 +6,10 @@ export const allModelsQuery = defineQuery(`
     name,
     stageName,
     instagram,
-    image
+    image {
+      ...,
+      "lqip": asset->metadata.lqip
+    }
   }
 `)
 
@@ -16,6 +19,9 @@ export const executiveProducerQuery = defineQuery(`
     name,
     stageName,
     instagram,
-    image
+    image {
+      ...,
+      "lqip": asset->metadata.lqip
+    }
   }
 `)
