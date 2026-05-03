@@ -1,6 +1,6 @@
 /**
- * Importer: reads a CSV of look pieces, resolves pieceType and brand
- * references, and patches look.pieces (full replacement per look).
+ * Importer: reads a CSV of look pieces, resolves brand references, and
+ * patches look.pieces (full replacement per look).
  *
  * ⚠️  This script REPLACES look.pieces entirely for each look in the CSV.
  *     Any manual edits made in the Studio will be overwritten. Back up the
@@ -13,12 +13,12 @@
  *   modelName,slot,brands[,target]
  *   Dacota,Camisa,Melanina AM
  *   Dacota,Bermuda,Ateliê 1970
- *   Dacota,Colar,"Ateliê Fernanda Menezes"
+ *   Dacota,Macacão e bota,"Ateliê Fernanda Menezes"
  *   Ana,Camisa,"Brand A, Brand B"
  *
  * Columns:
  *   modelName   – matches look.model.name (case-insensitive, accent-insensitive)
- *   slot        – matches pieceType.name (case-insensitive, accent-insensitive)
+ *   slot        – free-text label stored as-is (e.g. "Camisa", "Macacão e bota")
  *   brands      – comma-separated list of brand names; use quotes if a name
  *                 contains a comma. Each entry matches brand.name or
  *                 brand.instagram (substring, case-insensitive, accent-insensitive).
@@ -27,8 +27,7 @@
  *
  * Behavior:
  *   - All CSV rows are resolved in memory before any patch is applied.
- *   - Any unresolved slot, brand, or modelName causes exit 1 with a clear
- *     error message. No partial patches.
+ *   - Any unresolved brand or modelName causes exit 1 with a clear error message.
  *   - Ambiguous brand match (>1 candidate) is also a fatal error.
  *   - Ambiguous modelName match (>1 look with same normalized model.name)
  *     is also a fatal error.
@@ -104,7 +103,6 @@ function randomKey(): string {
 // Sanity document types
 // ---------------------------------------------------------------------------
 
-type PieceTypeDoc = { _id: string; name: string }
 type BrandDoc = { _id: string; name?: string | null; instagram?: string | null }
 type LookDoc = { _id: string; model?: { name?: string | null } | null }
 
@@ -126,7 +124,7 @@ type CsvRow = {
 type ResolvedPiece = {
   _key: string
   _type: 'piece'
-  slot: { _type: 'reference'; _ref: string }
+  slot: string
   brands: { _key: string; _type: 'reference'; _ref: string }[]
 }
 
@@ -151,23 +149,14 @@ async function main() {
   console.log(`Parsed ${rows.length} CSV row(s) from "${csvPath}".`)
 
   // --- Load Sanity data ---
-  const [pieceTypes, brands, looks] = await Promise.all([
-    client.fetch<PieceTypeDoc[]>(`*[_type == "pieceType"]{ _id, name }`),
+  const [brands, looks] = await Promise.all([
     client.fetch<BrandDoc[]>(`*[_type == "brand"]{ _id, name, instagram }`),
     client.fetch<LookDoc[]>(`*[_type == "look"]{ _id, model { name } }`),
   ])
 
-  console.log(
-    `Loaded: ${pieceTypes.length} pieceType(s), ${brands.length} brand(s), ${looks.length} look(s).`,
-  )
+  console.log(`Loaded: ${brands.length} brand(s), ${looks.length} look(s).`)
 
   // --- Build lookup indexes ---
-  // pieceType: exact match by normalized name
-  const pieceTypeByName = new Map<string, PieceTypeDoc>()
-  for (const pt of pieceTypes) {
-    if (pt.name) pieceTypeByName.set(normalize(pt.name), pt)
-  }
-
   // look: by normalized model.name
   // Key: normalized model name → list of look docs (may have published + draft)
   const looksByModelName = new Map<string, LookDoc[]>()
@@ -207,7 +196,7 @@ async function main() {
     modelName: string
     lookDocs: LookDoc[]
     target?: string
-    slot: PieceTypeDoc
+    slot: string
     brandDocs: BrandDoc[]
   }
 
@@ -257,14 +246,6 @@ async function main() {
     const slotRaw = row.slot?.trim()
     if (!slotRaw) {
       errors.push(`${rowLabel}: missing slot`)
-      continue
-    }
-    const slotDoc = pieceTypeByName.get(normalize(slotRaw))
-    if (!slotDoc) {
-      errors.push(
-        `${rowLabel}: slot "${slotRaw}" not found in pieceType documents. ` +
-          `Available: ${[...pieceTypeByName.values()].map((p) => `"${p.name}"`).join(', ')}`,
-      )
       continue
     }
 
@@ -320,7 +301,7 @@ async function main() {
       modelName: modelNameRaw,
       lookDocs: filteredLooks,
       target,
-      slot: slotDoc,
+      slot: slotRaw,
       brandDocs: resolvedBrands,
     })
   }
@@ -346,7 +327,7 @@ async function main() {
       list.push({
         _key: randomKey(),
         _type: 'piece',
-        slot: { _type: 'reference', _ref: r.slot._id },
+        slot: r.slot,
         brands: r.brandDocs.map((b) => ({
           _key: randomKey(),
           _type: 'reference',
@@ -368,11 +349,10 @@ async function main() {
       const label = look?.model?.name ?? lookId
       console.log(`Look "${label}" (${lookId}): ${pieces.length} piece(s)`)
       for (const p of pieces) {
-        const slotDoc = pieceTypes.find((pt) => pt._id === p.slot._ref)
         const brandNames = p.brands
           .map((b) => brands.find((br) => br._id === b._ref)?.name ?? b._ref)
           .join(' · ')
-        console.log(`  ${slotDoc?.name ?? p.slot._ref}: ${brandNames}`)
+        console.log(`  ${p.slot}: ${brandNames}`)
       }
     }
     console.log('\n(dry-run: no writes)')
