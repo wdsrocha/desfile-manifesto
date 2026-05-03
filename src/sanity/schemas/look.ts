@@ -68,11 +68,8 @@ export const look = defineType({
             defineField({
               name: 'slot',
               title: 'Tipo de peça',
-              type: 'reference',
-              to: [{ type: 'pieceType' }],
-              options: {
-                disableNew: false,
-              },
+              type: 'string',
+              description: 'Ex.: "Camisa", "Macacão e bota".',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
@@ -85,7 +82,7 @@ export const look = defineType({
           ],
           preview: {
             select: {
-              slotName: 'slot.name',
+              slotName: 'slot',
               brand0: 'brands.0.name',
               brand1: 'brands.1.name',
               brand2: 'brands.2.name',

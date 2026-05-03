@@ -9,7 +9,7 @@ interface LookPiecesProps {
 
 export function LookPieces({ pieces }: LookPiecesProps) {
   const validPieces = (pieces ?? []).filter(
-    (p) => p.slot != null && (p.brands ?? []).length > 0,
+    (p) => p.slot != null && p.slot !== '' && (p.brands ?? []).length > 0,
   );
 
   if (validPieces.length === 0) return null;
@@ -22,7 +22,7 @@ export function LookPieces({ pieces }: LookPiecesProps) {
         );
         return (
           <li key={piece._key}>
-            <div className="editorial-eyebrow">{piece.slot!.name}</div>
+            <div className="editorial-eyebrow">{piece.slot}</div>
             <span className="flex flex-wrap items-baseline gap-x-1 text-ink leading-snug">
               {validBrands.flatMap((brand, i) => {
                 const separator = i > 0 ? (

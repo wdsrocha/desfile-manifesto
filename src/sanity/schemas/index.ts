@@ -5,8 +5,6 @@ import { event } from './event'
 import { look } from './look'
 import { nextEvent } from './nextEvent'
 import { person } from './person'
-import { pieceType } from './pieceType'
-
 export const schemas: SchemaTypeDefinition[] = [
   event,
   nextEvent,
@@ -14,5 +12,4 @@ export const schemas: SchemaTypeDefinition[] = [
   brand,
   person,
   creditGroup,
-  pieceType,
 ]
