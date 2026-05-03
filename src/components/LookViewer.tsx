@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import type { AllLooksQueryResult } from "@/sanity/types";
 import { urlForImage } from "@/sanity/image";
 import { LookCarousel } from "./LookCarousel";
+import { LookPieces } from "./LookPieces";
 
 type Look = AllLooksQueryResult[number];
 
@@ -108,16 +109,7 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
                   </div>
                 )}
 
-                {look.styling && look.styling.length > 0 && (
-                  <div>
-                    <div className="editorial-eyebrow mb-1">Peças</div>
-                    <ul className="flex flex-col gap-1 text-ink leading-snug">
-                      {look.styling.map((line, i) => (
-                        <li key={i}>{line}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <LookPieces pieces={look.pieces} />
               </div>
             </div>
           </div>
