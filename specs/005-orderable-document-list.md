@@ -1,4 +1,4 @@
-# PRD 005 — Migração de `order: number` para `@sanity/orderable-document-list`
+# PRD 005 — Ordenação de looks com `@sanity/orderable-document-list` + remoção de campos `order` legados
 
 > Status: Draft
 > Autor: Wesley Rocha
@@ -9,136 +9,112 @@
 
 ## 1. Sumário executivo
 
-O padrão atual de ordenação manual — um campo `order: number` setado à mão pelo editor — é frágil: inserir um item entre dois existentes exige renumerar, duplicatas passam despercebidas e não há feedback visual de ordem no Studio. O plugin `@sanity/orderable-document-list` substitui esse padrão por drag-and-drop com rank lexicográfico (`orderRank: string`), sem renumeração.
+O campo `order: number` existe hoje em cinco schemas (`look`, `person`, `brand`, `creditGroup`, `pieceType`) como mecanismo de ordenação manual. A estratégia adotada é simples e direta: apenas `look` recebe o plugin `@sanity/orderable-document-list` (drag-and-drop); todos os outros tipos passam a usar ordenação lexicográfica e o campo `order` é simplesmente removido. O campo `lookNumber` — que hoje serve de chave de ordenação **e** de identificador editorial — é removido junto.
 
-**Estado final**: os document types que hoje dependem de `order: number` para ordenação no site passam a usar `orderRank`, drag-and-drop no Studio e `order(orderRank asc)` no GROQ. O campo `order: number` é removido dos schemas e dos documentos. `look` fica de fora (ver §12).
-
----
-
-## 2. Diagnóstico — estado atual
-
-### 2.1 Tipos com `order: number`
-
-| Tipo          | Campo `order` no schema | Usado em GROQ?             | Site depende da ordem?       |
-| ------------- | ----------------------- | -------------------------- | ---------------------------- |
-| `creditGroup` | ✅ sim                  | ✅ `order(order asc)`      | ✅ sim (seção de créditos)   |
-| `pieceType`   | ✅ sim                  | ❌ (só Studio ordering)    | ⚠️ via picker, indiretamente |
-| `person`      | ✅ sim                  | ✅ `order(order asc, ...)` | ✅ sim (modelos, produção)   |
-| `brand`       | ✅ sim                  | ❌ query usa `name asc`    | ❌ não (ordem é alfabética)  |
-
-### 2.2 `look` — padrão diferente
-
-`look` usa `lookNumber: string` ("01", "02") como chave de ordem **e** de exibição ("Look 01"). A query faz `order(lookNumber asc)`. Não é `order: number` — é uma chave semântica. Tratado separadamente em §11 (fora de escopo).
-
-### 2.3 Por que `brand.order` não está sendo usado
-
-A query `allBrandsQuery` ordena por `name asc`, ignorando o campo `order`. O campo existe no schema mas nunca foi lido pela query. Se a intenção futura for orderação manual de marcas, a migração faz sentido; se a intenção for manter alfabético, o campo pode simplesmente ser removido sem o plugin.
+**Estado final:**
+- `look` é ordenado por `orderRank` (string LexoRank). Sem `lookNumber`. Wesley arrasta looks no Studio para definir a ordem de exibição na grade do site.
+- `creditGroup`, `pieceType`, `person`, `brand`: sem campo `order`. Ordenação natural/lexicográfica (por nome, título, stageName — decidido por tipo).
+- O importer de peças (`scripts/import-pieces.ts`) passa a identificar o look pelo nome do modelo (`modelName`) em vez de `lookNumber`.
 
 ---
 
-## 3. Decisões já tomadas (não revisitar sem justificativa)
+## 2. Decisões já tomadas (não revisitar sem justificativa)
 
-| Decisão                        | Valor                                                                                              |
-| ------------------------------ | -------------------------------------------------------------------------------------------------- |
-| Plugin escolhido               | `@sanity/orderable-document-list` (oficial Sanity, sem dependências extras, API estável).          |
-| Campo gerado pelo plugin       | `orderRank: string` (LexoRank). Oculto na UI — o editor não vê, só arrasta.                       |
-| Ordem de migração              | `creditGroup` → `pieceType` → avaliar `person` → decidir `brand`. Cada tipo em fase separada.     |
-| `person`: não migrar agora     | Complexidade alta (ver §4.3). Fica como `order: number` até decisão explícita.                     |
-| `brand`: não migrar agora      | `order` já é ignorado na query. Remover o campo (sem plugin) é suficiente — ver §11.              |
-| `look`: fora de escopo         | `lookNumber` é semântico e funciona bem. Ver §11.                                                  |
-| Migração de conteúdo           | Script one-shot: lê os docs ordenados pelo `order` atual, atribui `orderRank` em sequência.       |
-| Remoção do campo legado        | `order` é removido do schema e dos documentos somente após a migração de `orderRank` estar validada. |
-
----
-
-## 4. Arquitetura / modelo mental
-
-### 4.1 Como o plugin funciona
-
-```
-Schema:
-  creditGroup {
-    orderRank: string   ← gerado pelo plugin (hidden)
-    title: string
-    order: number       ← campo legado, removido na fase final
-    ...
-  }
-
-Studio (structure.ts):
-  S.listItem()
-    .child(
-      OrderableDocumentListDeskItem(S, { type: 'creditGroup', ... })
-    )
-  ↑ substitui S.documentTypeListItems() automático
-
-GROQ:
-  *[_type == "creditGroup"] | order(orderRank asc) { ... }
-  ↑ substitui order(order asc)
-```
-
-### 4.2 Fluxo de migração por tipo
-
-```
-1. Instalar plugin + adicionar orderRank ao schema
-   └─ Studio exibe a lista com drag-and-drop (mas sem ranks ainda)
-
-2. Rodar script de migração de conteúdo
-   └─ Lê docs ordenados por order asc → atribui orderRank via setIfMissing
-
-3. Atualizar GROQ query: order(order asc) → order(orderRank asc)
-   └─ Rodar typegen
-
-4. Validar no site + Studio
-
-5. Remover campo order do schema
-   └─ Rodar script de cleanup para unset order nos documentos
-   └─ Rodar typegen
-```
-
-### 4.3 Complexidade por tipo
-
-**`creditGroup`** — Simples. ~5 documentos. Ordem linear. Sem complicadores. Fase de referência.
-
-**`pieceType`** — Simples. 4 documentos. Sem query GROQ direta (só Studio). Após migração, o picker de `slot` no Studio usará `orderRank` para ordenar o dropdown — mas isso requer configurar `orderBy` no campo `reference` de `look.pieces[].slot`.
-
-**`person`** — Complexo por dois motivos:
-1. A query atual mistura papéis: `order(order asc, stageName asc)`. Um único `orderRank` global ordena todos os `person` sem distinção de papel — o editor teria que manter a ordem global manualmente em vez de por papel.
-2. O site consome `person` em contextos separados: modelos têm sua lista, produção executiva tem a sua. A ordem relevante é **dentro do papel**, não global.
-
-Alternativa para `person`: criar uma `OrderableDocumentListDeskItem` **por papel** no Studio (uma lista arrastável para modelos, outra para fotógrafos, etc.) e manter `orderRank` único mas garantindo que o editor só arrasta dentro do papel. Isso resolve o problema, mas aumenta a complexidade de configuração da estrutura.
-
-**`brand`** — Sem valor imediato. A query não usa `order`. Se a decisão for manter ordem alfabética, o campo `order` pode ser simplesmente removido (sem script de migração, sem plugin). Se a decisão for habilitar ordem manual para marcas no site, aí sim o plugin se aplica.
+| Decisão | Valor |
+| ------- | ----- |
+| Plugin para ordenação de looks | `@sanity/orderable-document-list`. Campo gerado: `orderRank: string`. |
+| Plugin para outros tipos | Não. Ordem lexicográfica é suficiente para `creditGroup`, `pieceType`, `person`, `brand`. |
+| Remoção de `lookNumber` | Completa. Usado apenas para ordenação e comunicação interna; ambos resolvidos por `orderRank` + nome do modelo. |
+| Identificador no CSV do importer | `modelName` (match por `look.model.name`, case-insensitive sem acentos). Quebra compatibilidade com CSVs anteriores — documentado no header do script. |
+| `data/initial-pieces.csv` | Atualizar coluna `lookNumber` → `modelName` como parte da Fase 1. |
+| Ordem de `creditGroup` | Por `title asc`. |
+| Ordem de `pieceType` | Por `name asc`. |
+| Ordem de `person` | Por `stageName asc` dentro de cada role (query já filtra por role). |
+| Ordem de `brand` | Por `name asc` (inalterada — query já faz isso). |
 
 ---
 
-## 5. Convenções
+## 3. Arquitetura / modelo mental
 
-- O campo `orderRank` é **sempre oculto** (`hidden: true`) no schema — o editor não digita, só arrasta.
-- A configuração do `OrderableDocumentListDeskItem` fica em `src/sanity/structure.ts`.
-- GROQ usa `order(orderRank asc)` como critério principal. Critérios secundários (`stageName asc` etc.) são mantidos para desempate enquanto `orderRank` não cobre todos os docs.
-- Script de seed de `orderRank`: `scripts/seed-order-rank-<type>.ts`. Um por tipo. Idempotente (`setIfMissing`).
-- Após remover `order`, rodar `npm run typegen`.
+### Fluxo de ordenação de looks (pós-migração)
+
+```
+Studio:
+  OrderableDocumentListDeskItem para 'look'
+  └─ Wesley arrasta → Sanity escreve orderRank no documento
+
+GROQ (allLooksQuery):
+  *[_type == "look"] | order(orderRank asc) { ... }
+  ↑ não tem mais "lookNumber"
+
+Site:
+  LooksSection recebe looks já ordenados pelo GROQ
+  Label de acessibilidade = model.name (já era o preferido;
+  o fallback numérico baseado em lookNumber some)
+```
+
+### Impacto no importer de peças
+
+```
+CSV antes (PRD 003):
+  lookNumber, slot, brands
+  01, Camisa, Melanina AM
+
+CSV depois:
+  modelName, slot, brands
+  Dacota, Camisa, Melanina AM
+
+scripts/import-pieces.ts:
+  looksByNumber → looksByModelName
+  match: look.model.name, case-insensitive sem acentos
+  (mesma lógica de normalização já existente no script)
+```
+
+### Fluxo de remoção dos outros campos `order`
+
+```
+Para cada tipo (creditGroup, pieceType, person, brand):
+  1. Remover field do schema
+  2. Atualizar query GROQ (se usava order(order asc))
+  3. Script de cleanup: unset(['order']) em todos os docs
+  4. npm run typegen
+```
+
+---
+
+## 4. Convenções
+
+- `orderRank` é **sempre oculto** (`hidden: true`) — editor não digita, só arrasta.
+- A configuração de `OrderableDocumentListDeskItem` fica em `src/sanity/structure.ts`, substituindo o item automático de `look` gerado por `S.documentTypeListItems()`.
+- O importer usa `modelName` como chave no CSV. Se dois looks tiverem o mesmo nome de modelo, o importer **falha alto** (ambiguidade — mesmo padrão já adotado para brand match).
+- Scripts de cleanup seguem o padrão dos existentes: `--dry-run`, `perspective: raw`, `SANITY_API_WRITE_TOKEN`.
+
+---
+
+## 5. Estratégia de ambientes
+
+Sem mudanças. Dataset `production` único para todos os ambientes (decisão PRD 001). Scripts de migração rodam localmente com `SANITY_API_WRITE_TOKEN`.
 
 ---
 
 ## 6. Restrições técnicas / limites externos
 
-- **Versão do plugin**: verificar compatibilidade com `sanity@^5` antes de instalar (`@sanity/orderable-document-list@^1`).
-- **`orderRank` em pickers de referência**: o picker de `reference` no Studio ordena documentos pelo `orderings` definido no schema do tipo referenciado, não pelo `orderRank` — a menos que o ordering padrão do tipo use `orderRank`. Isso afeta o picker de `slot` em `look.pieces`: configurar `orderings` do `pieceType` para usar `orderRank asc`.
-- **Sem impacto no bundle do cliente**: `orderRank` é consultado pelo Sanity client; o campo é uma string opaca. Zero dependência nova no front.
+- **Versão do plugin**: `@sanity/orderable-document-list@^1` é compatível com `sanity@^5`. Confirmar no momento da instalação.
+- **`orderRank` em docs existentes**: novos docs criados pelo Studio recebem `orderRank` automaticamente. Docs existentes precisam do script de seed — deve rodar **antes** de trocar a query GROQ para `order(orderRank asc)`.
+- **LooksSection.tsx**: usa `look.lookNumber` como fallback para aria-label e alt text. Após remoção, o fallback numérico baseado em `lookNumber` é removido; o fallback passa a ser texto genérico ("Abrir look").
 - **TypeGen**: rodar com Node 24 após cada mudança de schema ou query.
+- **Importer**: a coluna do CSV muda de `lookNumber` para `modelName`. Qualquer CSV gerado antes desta migração precisa ser atualizado antes de ser re-executado.
 
 ---
 
 ## 7. Riscos e mitigações
 
-| Risco                                                                      | Probabilidade | Mitigação                                                                                                   |
-| -------------------------------------------------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
-| Docs criados após a migração não têm `orderRank` (aparecem no topo/fundo)  | Alto          | O plugin adiciona `orderRank` automaticamente em novos docs criados pelo Studio. Script de seed é one-shot. |
-| Picker de `slot` no Studio não respeita `orderRank`                        | Médio         | Atualizar `orderings` do `pieceType` para usar `orderRank asc` como ordering padrão.                        |
-| `person` com ordem errada após migração global                             | Alto (se migrado sem lista por papel) | Deixar `person` fora do escopo até definir a estrutura de listas por papel.       |
-| Query retorna `null` para `orderRank` em docs antigos (antes do seed)      | Médio         | Rodar o seed **antes** de trocar a query GROQ. Manter `order` como fallback na query durante a transição.   |
-| Plugin incompatível com a versão atual do Sanity Studio                    | Baixo         | Verificar versão antes de instalar. O plugin é oficial e segue o ciclo do Studio.                           |
+| Risco | Probabilidade | Mitigação |
+| ----- | ------------- | --------- |
+| Dois looks com o mesmo nome de modelo no CSV | Baixo | Importer falha alto com mensagem clara. Usar nome mais específico no CSV ou editar diretamente no Studio. |
+| Looks sem modelo cadastrado ficam sem identificador no CSV | Médio | Importer reporta erro na resolução. Editor cadastra o modelo antes de rodar. |
+| Docs antigos sem `orderRank` aparecem fora de ordem antes do seed | Alto | Seed roda antes de qualquer mudança na query GROQ. |
+| CSS/layout depende de lookNumber para algum atributo `data-*` | Baixo | Nenhum uso encontrado no código. |
 
 ---
 
@@ -149,219 +125,208 @@ Alternativa para `person`: criar uma `OrderableDocumentListDeskItem` **por papel
 
 ### Status das fases
 
-| Fase | Título                                                      | Prioridade | Status |
-| ---- | ----------------------------------------------------------- | ---------- | ------ |
-| 0    | Instalação do plugin e setup base                           | P0         | ⬜      |
-| 1    | Migração de `creditGroup`                                   | P0         | ⬜      |
-| 2    | Migração de `pieceType`                                     | P0         | ⬜      |
-| 3    | Remoção de `brand.order` (sem plugin)                       | P1         | ⬜      |
-| 4    | Migração de `person` (requer decisão editorial prévia)      | P2         | ⬜      |
+| Fase | Título | Prioridade | Status |
+| ---- | ------ | ---------- | ------ |
+| 0 | Instalação do plugin | P0 | ⬜ |
+| 1 | Migração de `look`: `orderRank` + remoção de `lookNumber` | P0 | ⬜ |
+| 2 | Remoção de `order` dos tipos restantes | P1 | ⬜ |
 
 ---
 
-### Fase 0 — Instalação do plugin e setup base [P0]
+### Fase 0 — Instalação do plugin [P0]
 
-**Objetivo**: instalar `@sanity/orderable-document-list`, confirmar compatibilidade, expandir `structure.ts` para receber itens ordenáveis por tipo.
+**Objetivo**: instalar `@sanity/orderable-document-list` e confirmar que o Studio abre sem erros.
 
 **Pré-requisitos**: nenhum.
 
 **Arquivos a modificar:**
 - `package.json` — `npm install @sanity/orderable-document-list`.
-- `src/sanity/structure.ts` — expandir de `S.documentTypeListItems()` implícito para itens explícitos por tipo, preparando os slots onde `OrderableDocumentListDeskItem` será inserido nas fases seguintes. Por ora, manter comportamento idêntico ao atual.
-
-**Arquivos a criar:** nenhum.
 
 **Tarefas externas:**
 1. `npm install @sanity/orderable-document-list`.
-2. Verificar que Studio abre sem erros.
+2. `npm run dev` — abrir o Studio e confirmar sem erros no console.
 
 **Critérios de aceitação:**
-- [ ] `npm run dev` (Studio) abre sem erros de importação.
+- [ ] `npm run dev` (Studio) sobe sem erros.
 - [ ] `tsc --noEmit` passa.
-- [ ] Nenhuma mudança de comportamento visível.
 
 **Commits sugeridos:**
 1. `chore(studio): install orderable-document-list plugin`
-2. `refactor(studio): expand structure to explicit per-type items`
 
 ---
 
-### Fase 1 — Migração de `creditGroup` [P0]
+### Fase 1 — Migração de `look`: `orderRank` + remoção de `lookNumber` [P0]
 
-**Objetivo**: substituir `order: number` por `orderRank` em `creditGroup`. Tipo mais simples, serve de referência para as fases seguintes.
+**Objetivo**: substituir `lookNumber` por `orderRank` no schema de `look`; atualizar query, tipos, componentes e o importer de peças.
 
 **Pré-requisitos**: Fase 0.
 
-**Arquivos a modificar:**
-- `src/sanity/schemas/creditGroup.ts`:
-  - Adicionar `orderRank: string` com `hidden: true` via helper `defineOrderableField()` do plugin.
-  - Manter `order: number` temporariamente (removido na etapa final).
-  - Atualizar `orderings`: adicionar `orderRank asc` como ordering padrão.
-- `src/sanity/structure.ts` — substituir o item de `creditGroup` por `OrderableDocumentListDeskItem(S, { type: 'creditGroup', ... })`.
-- `src/sanity/queries/credits.ts` — trocar `order(order asc)` por `order(orderRank asc)`.
-
 **Arquivos a criar:**
-- `scripts/seed-order-rank-credit-group.ts` — script idempotente: busca `*[_type == "creditGroup"] | order(order asc)`, atribui `orderRank` em sequência usando `setIfMissing`. Usa `orderedDocumentListDragHandle` do plugin para gerar os ranks (ou `initialOrderRankFor()` da API do plugin).
-
-**Tarefas externas:**
-1. `tsx scripts/seed-order-rank-credit-group.ts --dry-run` → revisar output.
-2. `tsx scripts/seed-order-rank-credit-group.ts`.
-3. Verificar no Studio: lista de `creditGroup` exibe drag-and-drop; arrastar muda a ordem.
-4. Verificar no site: seção de créditos em ordem correta.
-5. `nvm use 24 && npm run typegen`.
-
-**Etapa final (após validação):**
-- Remover `order` de `creditGroup.ts`.
-- Criar `scripts/cleanup-credit-group-order.ts` — `unset(['order'])` em todos os docs.
-- Rodar cleanup + typegen.
-
-**Critérios de aceitação:**
-- [ ] Drag-and-drop funcional no Studio para `creditGroup`.
-- [ ] Site renderiza grupos de créditos na ordem arrastada.
-- [ ] Re-rodar seed é no-op.
-- [ ] `tsc --noEmit` passa.
-- [ ] Studio sem campo `order` visível após etapa final.
-
-**Commits sugeridos:**
-1. `feat(credit-group): add orderRank field via orderable-document-list`
-2. `chore(content): seed orderRank for creditGroup documents`
-3. `chore(credit-group): drop legacy order field`
-
----
-
-### Fase 2 — Migração de `pieceType` [P0]
-
-**Objetivo**: substituir `order: number` por `orderRank` em `pieceType`, e garantir que o picker de `slot` no Studio respeite a nova ordem.
-
-**Pré-requisitos**: Fase 1 (padrão estabelecido).
-
-**Atenção específica**: `pieceType` não tem query GROQ direta — mas o picker de `slot` em `look.pieces` usa o `orderings` do schema para ordenar os documentos no dropdown do Studio. É preciso atualizar o ordering padrão para `orderRank asc`, caso contrário o picker continuará ordenando pelo campo antigo (ou por `_createdAt`).
+- `scripts/seed-order-rank-looks.ts` — script idempotente (`--dry-run`):
+  - Carrega todos os docs `look` (`perspective: raw`) ordenados por `lookNumber asc` (enquanto o campo ainda existe no banco).
+  - Para cada look sem `orderRank`, atribui um rank usando `client.patch(_id).setIfMissing({ orderRank: <rank> }).commit()`.
+  - Usa `initialOrderRankFor('look')` e `nextOrderRankPair()` da API pública do plugin para gerar os ranks em sequência.
+  - Referência: [docs do plugin para seed](https://www.npmjs.com/package/@sanity/orderable-document-list).
 
 **Arquivos a modificar:**
-- `src/sanity/schemas/pieceType.ts`:
-  - Adicionar `orderRank` via helper do plugin.
-  - Atualizar `orderings` padrão para `orderRank asc`.
-  - Manter `order: number` temporariamente.
-- `src/sanity/structure.ts` — `OrderableDocumentListDeskItem` para `pieceType`.
+- `src/sanity/schemas/look.ts`:
+  - Importar `defineOrderableField` (ou `orderRankField`) do plugin e adicionar o campo `orderRank` (hidden).
+  - Remover o field `lookNumber`.
+  - Atualizar `orderings`: remover `lookNumberAsc`, adicionar ordering por `orderRank asc`.
+  - Atualizar `preview`: `select.title` deixa de ser `lookNumber`; passa a ser `model.name` ou `model.stageName` (o que existir). Subtitle pode ser `images.0` (media).
 
-**Arquivos a criar:**
-- `scripts/seed-order-rank-piece-type.ts` — mesmo padrão da Fase 1.
+- `src/sanity/structure.ts`:
+  - Importar `OrderableDocumentListDeskItem` do plugin.
+  - Substituir o item automático de `look` (que hoje vem de `S.documentTypeListItems()`) por um item explícito usando `OrderableDocumentListDeskItem(S, { type: 'look', title: 'Looks' })`.
 
-**Tarefas externas:**
-1. Seed + validação no Studio (picker de slot mostra Camisa → Bermuda → Colar → Chapéu).
-2. Etapa final: remover `order`, cleanup script, typegen.
+- `src/sanity/queries/looks.ts`:
+  - Remover `lookNumber` da projeção.
+  - Trocar `order(lookNumber asc)` por `order(orderRank asc)`.
 
-**Critérios de aceitação:**
-- [ ] Drag-and-drop funcional para `pieceType` no Studio.
-- [ ] Picker de slot em `look` exibe tipos na ordem arrastada.
-- [ ] `tsc --noEmit` passa.
+- `src/components/LooksSection.tsx`:
+  - Remover o uso de `look.lookNumber` (linha que faz `look.lookNumber ?? String(i + 1)...`).
+  - O aria-label e alt text passam a usar apenas `modelName` quando disponível, ou texto genérico ("Abrir look", "Look") como fallback.
 
-**Commits sugeridos:**
-1. `feat(piece-type): add orderRank field via orderable-document-list`
-2. `chore(content): seed orderRank for pieceType documents`
-3. `chore(piece-type): drop legacy order field`
+- `scripts/import-pieces.ts`:
+  - Renomear coluna `lookNumber` → `modelName` no tipo `CsvRow`.
+  - Atualizar a lógica de resolução: em vez de `looksByNumber` (map por `lookNumber`), usar `looksByModelName` (map por `look.model.name` normalizado).
+  - Atualizar header do script com a nova coluna.
+  - Falhar alto se dois looks tiverem o mesmo `model.name` normalizado (ambiguidade).
 
----
-
-### Fase 3 — Remoção de `brand.order` (sem plugin) [P1]
-
-**Objetivo**: remover o campo `order: number` de `brand`, que existe no schema mas nunca foi lido pela query do site (a query usa `order(name asc)`).
-
-**Pré-requisitos**: nenhum (independente das fases anteriores).
-
-**Decisão prévia necessária**: Wesley confirma que a ordenação de marcas no site permanecerá alfabética. Se em algum momento quiser ordem manual, essa fase vira uma migração com o plugin — não simplesmente remoção.
-
-**Arquivos a modificar:**
-- `src/sanity/schemas/brand.ts` — remover field `order` e o ordering `Manual (ordem asc)`.
-
-**Arquivos a criar:**
-- `scripts/cleanup-brand-order.ts` — `unset(['order'])` em todos os docs `brand`.
+- `data/initial-pieces.csv`:
+  - Atualizar header: `lookNumber,slot,brands` → `modelName,slot,brands`.
+  - Atualizar valor da coluna (ex.: `01` → nome do modelo do Look 01).
 
 **Tarefas externas:**
-1. `tsx scripts/cleanup-brand-order.ts --dry-run`.
-2. `tsx scripts/cleanup-brand-order.ts`.
+1. `tsx scripts/seed-order-rank-looks.ts --dry-run` — revisar ranks propostos.
+2. `tsx scripts/seed-order-rank-looks.ts` — seed em produção.
 3. `nvm use 24 && npm run typegen`.
+4. `npm run dev` — abrir Studio, confirmar drag-and-drop na lista de looks.
+5. Verificar no site: grade de looks em ordem correta, sem erros de acessibilidade.
+6. Script de cleanup pós-validação: `scripts/cleanup-look-look-number.ts` — `unset(['lookNumber'])` em todos os docs, rodar após confirmar que tudo funciona.
 
 **Critérios de aceitação:**
-- [ ] Schema e tipo gerado sem campo `order`.
-- [ ] Studio sem campo `Ordem` visível em brand.
-- [ ] `*[_type=="brand"][0]{order}` no Vision retorna `null`.
+- [ ] Studio: lista de looks exibe drag-and-drop; arrastar muda a ordem na grade do site após revalidação.
+- [ ] `tsc --noEmit` passa.
+- [ ] `npm run build` passa.
+- [ ] `allLooksQuery` não projeta `lookNumber`; tipo gerado não tem `lookNumber`.
+- [ ] `tsx scripts/import-pieces.ts data/initial-pieces.csv --dry-run` funciona com a coluna `modelName`.
+- [ ] CSV com nome de modelo inexistente: exit 1, mensagem clara.
+- [ ] Studio: preview do look exibe nome do modelo como título.
 
 **Commits sugeridos:**
-1. `chore(brand): remove unused order field`
-2. `chore(content): unset order field in all brand documents`
+1. `feat(look): add orderRank field via orderable-document-list`
+2. `chore(studio): configure orderable list for look documents`
+3. `chore(content): seed orderRank for existing look documents`
+4. `refactor(look): remove lookNumber from schema, query and components`
+5. `refactor(scripts): update import-pieces to identify looks by model name`
+6. `chore(content): unset lookNumber from all look documents`
+
+**Notas para o agente:**
+- O seed de `orderRank` deve rodar **antes** de trocar a query para `order(orderRank asc)`. A sequência correta é: seed → typegen → trocar query → testar.
+- `LooksSection.tsx` usa `look.lookNumber` apenas como fallback (string de acessibilidade quando não há nome de modelo). Remover a variável `number` e simplificar as strings de fallback para `"Abrir look"` / `"Look"`.
+- O campo `orderRank` deve ser `hidden: true` no schema para não aparecer como campo editável no formulário do look.
+- Confirmar no [repositório do plugin](https://www.npmjs.com/package/@sanity/orderable-document-list) a API exata para `initialOrderRankFor` antes de escrever o seed script — a API pode ter mudado.
 
 ---
 
-### Fase 4 — Migração de `person` [P2]
+### Fase 2 — Remoção de `order` dos tipos restantes [P1]
 
-**Pré-requisito**: decisão editorial prévia sobre a estrutura de listas no Studio.
+**Objetivo**: remover o campo `order: number` de `creditGroup`, `pieceType`, `person` e `brand`; atualizar as queries que o usavam para ordenação lexicográfica.
 
-**Por que é diferente**: `person` agrupa múltiplos papéis (model, photographer, production, volunteer, etc.). A ordenação atual é `role + order + stageName` — ou seja, a ordem é **dentro de cada papel**. Um `orderRank` global único não captura isso.
+**Pré-requisitos**: nenhum (independente da Fase 1).
 
-**Duas opções a decidir antes de executar:**
+**Ordenação resultante por tipo:**
 
-**Opção A — Lista única global (simples, menos fiel)**
-- Uma lista arrastável de todos os `person` juntos.
-- O editor arrasta para posicionar a ordem global.
-- A query continua filtrando por role, mas a "posição" dentro de cada papel vira implícita pela posição global.
-- Risco: editor pode acidentalmente embaralhar a ordenação entre papéis.
+| Tipo | Query GROQ resultante | Mudança |
+| ---- | --------------------- | ------- |
+| `creditGroup` | `order(title asc)` | era `order(order asc)` |
+| `pieceType` | `order(name asc)` | sem query direta; Studio ordering muda |
+| `person` (modelos) | `order(stageName asc)` | era `order(order asc, stageName asc)` |
+| `person` (produção) | `order(stageName asc)` | era `order(order asc)` |
+| `brand` | sem mudança | query já era `order(name asc)` |
 
-**Opção B — Uma lista por papel (complexo, mais correto)**
-- `structure.ts` cria uma seção "Pessoas" com sub-itens: "Modelos", "Fotógrafos", "Produção", etc.
-- Cada sub-item é um `OrderableDocumentListDeskItem` filtrado por `role`.
-- `orderRank` é único por documento, mas o editor só arrasta dentro do contexto do papel.
-- GROQ mantém o filtro por `role` existente, ordena por `orderRank asc`.
-- Mais setup em `structure.ts`; mais correto editorialmente.
+**Arquivos a modificar:**
+- `src/sanity/schemas/creditGroup.ts` — remover field `order`; atualizar `orderings` para `title asc`.
+- `src/sanity/schemas/pieceType.ts` — remover field `order`; atualizar `orderings` para `name asc`.
+- `src/sanity/schemas/person.ts` — remover field `order`; simplificar `orderings` (remover critério `order`).
+- `src/sanity/schemas/brand.ts` — remover field `order`; remover ordering `Manual (ordem asc)` (manter só `Nome (A-Z)`).
+- `src/sanity/queries/credits.ts` — `order(order asc)` → `order(title asc)`.
+- `src/sanity/queries/people.ts` — `order(order asc, stageName asc)` → `order(stageName asc)`; `order(order asc)` → `order(stageName asc)`.
 
-**Recomendação**: Opção B. O Studio já tem a noção de "seção por papel" implícita no uso (query separada por role); tornar isso explícito na estrutura melhora a UX sem custo no front.
+**Arquivos a criar:**
+- `scripts/cleanup-order-fields.ts` — script único que faz `unset(['order'])` em todos os docs de `creditGroup`, `pieceType`, `person` e `brand`. Um patch por tipo, idempotente. Suporta `--dry-run`.
 
-**Esta fase só deve ser executada após Wesley confirmar qual opção seguir.**
+**Tarefas externas:**
+1. `tsx scripts/cleanup-order-fields.ts --dry-run`.
+2. `tsx scripts/cleanup-order-fields.ts`.
+3. `nvm use 24 && npm run typegen`.
+4. Confirmar no Studio que os campos `Ordem` sumiram dos formulários.
+
+**Critérios de aceitação:**
+- [ ] Nenhum schema com field `order`.
+- [ ] `tsc --noEmit` passa.
+- [ ] `*[_type in ["creditGroup","pieceType","person","brand"]][0]{order}` no Vision retorna `null`.
+- [ ] Studio sem campo `Ordem` em nenhum desses tipos.
+
+**Commits sugeridos:**
+1. `chore(schemas): remove manual order field from creditGroup, pieceType, person, brand`
+2. `refactor(queries): use lexicographic ordering after removing order fields`
+3. `chore(content): unset order field from all affected documents`
 
 ---
 
 ## 9. Glossário
 
-- **`orderRank`**: campo `string` gerado pelo plugin que armazena um rank LexoRank. Permite inserções entre items sem renumerar. Opaco — não é exibido ao editor.
-- **LexoRank**: algoritmo de rank fracionário onde inserir entre "a" e "b" gera "am" (ex.). Elimina colisões e renumerações.
-- **`OrderableDocumentListDeskItem`**: componente do plugin que substitui `S.documentList()` na estrutura do Studio, adicionando handles de drag-and-drop.
-- **`initialOrderRankFor(type)`**: helper do plugin que gera o rank inicial para um documento novo de um tipo.
-- **`setIfMissing`**: operação de patch do Sanity client que só escreve se o campo ainda não existe — garante idempotência do script de seed.
+- **`orderRank`**: campo `string` com rank LexoRank. Permite inserção entre itens sem renumerar. Gerado e mantido pelo plugin `@sanity/orderable-document-list`. Opaco — não exibido ao editor.
+- **LexoRank**: algoritmo de rank fracionário (inserir entre "a" e "b" gera "am"). Sem colisões, sem renumerações.
+- **`OrderableDocumentListDeskItem`**: componente do plugin que adiciona drag-and-drop à lista de documentos no Studio.
+- **`initialOrderRankFor(type)`**: helper do plugin que gera o primeiro rank para um tipo.
+- **`setIfMissing`**: operação de patch do Sanity que só escreve se o campo ainda não existe — garante idempotência no seed.
 
 ---
 
 ## 10. Apêndice — Configuração
 
-| Variável                | Ambientes    | Valor                                                                 |
-| ----------------------- | ------------ | --------------------------------------------------------------------- |
+| Variável | Ambientes | Valor |
+| -------- | --------- | ----- |
 | `SANITY_API_WRITE_TOKEN` | local apenas | Token com permissão de write, usado pelos scripts de seed e cleanup. |
 
 Sem novas envs em runtime. Sem novos webhooks. Sem mudanças de CORS.
+
+**Formato do CSV do importer após Fase 1:**
+
+```csv
+modelName,slot,brands
+Dacota,Camisa,Melanina AM
+Dacota,Bermuda,Ateliê 1970
+```
 
 ---
 
 ## 11. Fora de escopo (não agora)
 
-- **`look` / `lookNumber`**: `lookNumber` ("01", "02") é uma chave **semântica** — aparece no UI como "Look 01" e é usada para comunicação editorial ("vou editar o look 03"). Não é apenas um índice de ordenação. Substituir por `orderRank` opaco quebraria essa semântica. O padrão correto para looks é manter `lookNumber` e aceitar que inserir um look "entre o 01 e o 02" exige renomear um dos dois — o que é raro e intencional. Se o volume de looks crescer muito e a renomeação virar problema real, revisitar com uma estratégia específica (ex.: `lookNumber` como label livre + `orderRank` como chave de ordem).
-- **Ordenação de `brand` com drag-and-drop**: se a decisão mudar e Wesley quiser ordem manual de marcas no site, a Fase 3 vira uma migração com o plugin em vez de simples remoção de campo.
-- **Ordenação dentro de `look.pieces[]`**: o array de peças de um look já é ordenado pela posição no array (drag-and-drop nativo do Sanity para arrays). Não precisa do plugin.
+- Ordenação manual de marcas no site (decisão: ordem alfabética permanece).
+- Ordenação manual de grupos de créditos (ordem alfabética por título é suficiente).
+- Ordenação de `look.pieces[]` dentro de um look (arrays do Sanity já têm drag-and-drop nativo).
+- Página ou filtro por look no site.
 
 ---
 
 ## 12. Trade-offs discutidos
 
-**Por que não migrar tudo de uma vez?**
-- **Opção A (escolhida)**: tipo por tipo, em fases separadas. Cada fase tem seu script de seed e validação. Rollback é um revert de commit + cleanup script.
-- **Opção B**: migração em massa (um script que migra todos os tipos de uma vez). Rejeitada — erro em um tipo contamina todos; dificulta rollback seletivo.
+**Plugin apenas para `look` vs plugin para todos os tipos**
+- **Opção A (escolhida)**: plugin só para `look`; resto usa ordem lexicográfica. Simples: sem drag-and-drop onde não é necessário.
+- **Opção B**: plugin para todos os tipos com `order`. Mais consistente na UX do Studio, mas adiciona complexidade de setup e seed sem necessidade editorial real.
 
-**`orderRank` vs `order: number` para `pieceType`**
-- **Opção A (escolhida)**: migrar para `orderRank`. Consistência com os outros tipos; drag-and-drop é melhor UX para o picker.
-- **Opção B**: manter `order: number` em `pieceType` (catálogo pequeno, raramente muda). Aceitável, mas cria inconsistência com `creditGroup` após a Fase 1. Custo de migração é baixo — vale a consistência.
+**Remoção de `lookNumber` vs mantê-lo como label**
+- **Opção A (escolhida)**: remover completamente. A identidade editorial do look já é o nome do modelo ("o look da Dacota"), não o número.
+- **Opção B**: manter como label livre opcional. Cria confusão entre o número exibido e a posição real na grade (que passa a ser controlada pelo `orderRank`). Rejeitada.
 
-**`brand.order`: remover vs migrar para plugin**
-- **Opção A (escolhida)**: remover sem plugin, já que a query já usa ordem alfabética.
-- **Opção B**: migrar para plugin (futura possibilidade). Não agora — adiciona complexidade sem benefício imediato.
+**Identificador no CSV do importer: `modelName` vs `_id`**
+- **Opção A (escolhida)**: `modelName`. Legível num spreadsheet; o editor sabe qual look é qual pelo nome do modelo.
+- **Opção B**: `_id` do documento. Inequívoco, mas ilegível. Inapropriado para um CSV editorial.
 
-**`person`: lista global vs lista por papel**
-- **Opção A**: lista única global. Simples de implementar, mas editorialmente confuso.
-- **Opção B (recomendada)**: lista por papel. Mais complexa no `structure.ts`, mas reflete o uso real. Decisão final fica com Wesley antes da Fase 4.
+**Um script de cleanup por tipo vs script único**
+- **Opção A (escolhida)**: script único `cleanup-order-fields.ts` para os quatro tipos sem plugin. Menos arquivos, mesma idempotência.
+- **Opção B**: um script por tipo (padrão das migrações anteriores). Mais verboso sem ganho real quando todos fazem a mesma operação.
