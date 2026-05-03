@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { AllLooksQueryResult } from "@/sanity/types";
+import { urlForImage, IMAGE_QUALITY } from "@/sanity/image";
 import { SectionHeader } from "./SectionHeader";
 import { LookImage } from "./LookImage";
 import { LookViewer } from "./LookViewer";
@@ -14,6 +15,14 @@ interface LooksSectionProps {
 
 export function LooksSection({ looks }: LooksSectionProps) {
   const [active, setActive] = useState<Look | null>(null);
+
+  const prefetchModal = useCallback((look: Look) => {
+    for (const img of look.images ?? []) {
+      if (!img?.asset) continue;
+      const el = new window.Image();
+      el.src = urlForImage(img).width(1200).quality(IMAGE_QUALITY).url();
+    }
+  }, []);
 
   return (
     <section
@@ -66,6 +75,8 @@ export function LooksSection({ looks }: LooksSectionProps) {
                   <button
                     type="button"
                     onClick={() => setActive(look)}
+                    onMouseEnter={() => prefetchModal(look)}
+                    onTouchStart={() => prefetchModal(look)}
                     className="group block w-full text-left"
                     aria-label={openLabel}
                   >
