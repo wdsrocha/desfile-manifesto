@@ -10,14 +10,14 @@
  *   tsx scripts/import-pieces.ts <path-to-csv> [--dry-run]
  *
  * CSV format (header row required):
- *   lookNumber,slot,brands[,target]
- *   01,Camisa,Melanina AM
- *   01,Bermuda,Ateliê 1970
- *   01,Colar,"Ateliê Fernanda Menezes"
- *   02,Camisa,"Brand A, Brand B"
+ *   modelName,slot,brands[,target]
+ *   Dacota,Camisa,Melanina AM
+ *   Dacota,Bermuda,Ateliê 1970
+ *   Dacota,Colar,"Ateliê Fernanda Menezes"
+ *   Ana,Camisa,"Brand A, Brand B"
  *
  * Columns:
- *   lookNumber  – matches look.lookNumber (string, e.g. "01")
+ *   modelName   – matches look.model.name (case-insensitive, accent-insensitive)
  *   slot        – matches pieceType.name (case-insensitive, accent-insensitive)
  *   brands      – comma-separated list of brand names; use quotes if a name
  *                 contains a comma. Each entry matches brand.name or
@@ -27,9 +27,11 @@
  *
  * Behavior:
  *   - All CSV rows are resolved in memory before any patch is applied.
- *   - Any unresolved slot, brand, or lookNumber causes exit 1 with a clear
+ *   - Any unresolved slot, brand, or modelName causes exit 1 with a clear
  *     error message. No partial patches.
  *   - Ambiguous brand match (>1 candidate) is also a fatal error.
+ *   - Ambiguous modelName match (>1 look with same normalized model.name)
+ *     is also a fatal error.
  *   - --dry-run prints the proposed pieces per look; no writes.
  *   - Idempotent: re-running with the same CSV produces the same state.
  *
@@ -102,16 +104,16 @@ function randomKey(): string {
 // Sanity document types
 // ---------------------------------------------------------------------------
 
-type PieceTypeDoc = { _id: string; name: string; order?: number | null }
+type PieceTypeDoc = { _id: string; name: string }
 type BrandDoc = { _id: string; name?: string | null; instagram?: string | null }
-type LookDoc = { _id: string; lookNumber?: string | null }
+type LookDoc = { _id: string; model?: { name?: string | null } | null }
 
 // ---------------------------------------------------------------------------
 // CSV row type
 // ---------------------------------------------------------------------------
 
 type CsvRow = {
-  lookNumber: string
+  modelName: string
   slot: string
   brands: string
   target?: string
@@ -150,9 +152,9 @@ async function main() {
 
   // --- Load Sanity data ---
   const [pieceTypes, brands, looks] = await Promise.all([
-    client.fetch<PieceTypeDoc[]>(`*[_type == "pieceType"]{ _id, name, order }`),
+    client.fetch<PieceTypeDoc[]>(`*[_type == "pieceType"]{ _id, name }`),
     client.fetch<BrandDoc[]>(`*[_type == "brand"]{ _id, name, instagram }`),
-    client.fetch<LookDoc[]>(`*[_type == "look"]{ _id, lookNumber }`),
+    client.fetch<LookDoc[]>(`*[_type == "look"]{ _id, model { name } }`),
   ])
 
   console.log(
@@ -166,13 +168,34 @@ async function main() {
     if (pt.name) pieceTypeByName.set(normalize(pt.name), pt)
   }
 
-  // look: by lookNumber (may have published + draft → two docs with same lookNumber)
-  const looksByNumber = new Map<string, LookDoc[]>()
+  // look: by normalized model.name
+  // Key: normalized model name → list of look docs (may have published + draft)
+  const looksByModelName = new Map<string, LookDoc[]>()
   for (const look of looks) {
-    if (!look.lookNumber) continue
-    const list = looksByNumber.get(look.lookNumber) ?? []
+    const name = look.model?.name?.trim()
+    if (!name) continue
+    const key = normalize(name)
+    const list = looksByModelName.get(key) ?? []
     list.push(look)
-    looksByNumber.set(look.lookNumber, list)
+    looksByModelName.set(key, list)
+  }
+
+  // Detect ambiguous model names across distinct looks (same name, different base _ids)
+  // published+draft share the same base _id so we group by base _id to count distinct looks
+  const ambiguousModelNames: string[] = []
+  for (const [normName, docs] of looksByModelName) {
+    const baseIds = new Set(docs.map((d) => d._id.replace(/^drafts\./, '')))
+    if (baseIds.size > 1) {
+      ambiguousModelNames.push(normName)
+    }
+  }
+  if (ambiguousModelNames.length > 0) {
+    console.error(
+      `\nAmbiguous model names (multiple distinct looks share the same normalized name):\n` +
+        ambiguousModelNames.map((n) => `  "${n}"`).join('\n'),
+    )
+    console.error('\nRename looks or models in the Studio before running the importer.')
+    process.exit(1)
   }
 
   // ---------------------------------------------------------------------------
@@ -181,7 +204,7 @@ async function main() {
 
   type ResolvedRow = {
     rowIndex: number
-    lookNumber: string
+    modelName: string
     lookDocs: LookDoc[]
     target?: string
     slot: PieceTypeDoc
@@ -195,15 +218,15 @@ async function main() {
     const row = rows[i]
     const rowLabel = `Row ${i + 2}` // +2: 1-indexed + header
 
-    // --- lookNumber ---
-    const lookNum = row.lookNumber?.trim()
-    if (!lookNum) {
-      errors.push(`${rowLabel}: missing lookNumber`)
+    // --- modelName ---
+    const modelNameRaw = row.modelName?.trim()
+    if (!modelNameRaw) {
+      errors.push(`${rowLabel}: missing modelName`)
       continue
     }
-    const lookDocs = looksByNumber.get(lookNum)
+    const lookDocs = looksByModelName.get(normalize(modelNameRaw))
     if (!lookDocs || lookDocs.length === 0) {
-      errors.push(`${rowLabel}: no look found with lookNumber="${lookNum}"`)
+      errors.push(`${rowLabel}: no look found with model.name="${modelNameRaw}"`)
       continue
     }
 
@@ -225,7 +248,7 @@ async function main() {
     }
     if (filteredLooks.length === 0) {
       errors.push(
-        `${rowLabel}: no ${target} document found for lookNumber="${lookNum}"`,
+        `${rowLabel}: no ${target} document found for modelName="${modelNameRaw}"`,
       )
       continue
     }
@@ -294,7 +317,7 @@ async function main() {
 
     resolved.push({
       rowIndex: i,
-      lookNumber: lookNum,
+      modelName: modelNameRaw,
       lookDocs: filteredLooks,
       target,
       slot: slotDoc,
@@ -341,8 +364,9 @@ async function main() {
   if (dryRun) {
     console.log('\n--- DRY RUN — proposed pieces per look ---\n')
     for (const [lookId, pieces] of piecesByLookId) {
-      const lookNum = looks.find((l) => l._id === lookId)?.lookNumber ?? '?'
-      console.log(`Look ${lookNum} (${lookId}): ${pieces.length} piece(s)`)
+      const look = looks.find((l) => l._id === lookId)
+      const label = look?.model?.name ?? lookId
+      console.log(`Look "${label}" (${lookId}): ${pieces.length} piece(s)`)
       for (const p of pieces) {
         const slotDoc = pieceTypes.find((pt) => pt._id === p.slot._ref)
         const brandNames = p.brands
@@ -362,8 +386,9 @@ async function main() {
   console.log(`\nPatching ${piecesByLookId.size} look document(s)…`)
 
   for (const [lookId, pieces] of piecesByLookId) {
-    const lookNum = looks.find((l) => l._id === lookId)?.lookNumber ?? '?'
-    console.log(`  - Look ${lookNum} (${lookId}): ${pieces.length} piece(s)`)
+    const look = looks.find((l) => l._id === lookId)
+    const label = look?.model?.name ?? lookId
+    console.log(`  - Look "${label}" (${lookId}): ${pieces.length} piece(s)`)
     await client.patch(lookId).set({ pieces }).commit()
   }
 
