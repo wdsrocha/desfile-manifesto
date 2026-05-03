@@ -6,6 +6,8 @@ type LookImageSource = {
   alt?: string | null;
 } | null;
 
+const COVER_CROP_WIDTH = 900;
+
 interface LookImageProps {
   image: LookImageSource;
   alt: string;
@@ -13,6 +15,7 @@ interface LookImageProps {
   sizes?: string;
   priority?: boolean;
   objectFit?: "cover" | "contain";
+  aspectRatio?: [number, number];
 }
 
 export function LookImage({
@@ -22,13 +25,21 @@ export function LookImage({
   sizes,
   priority = false,
   objectFit = "cover",
+  aspectRatio,
 }: LookImageProps) {
   const hasImage = image && (image as { asset?: unknown }).asset;
   const imageUrl = hasImage
-    ? urlForImage(image as Parameters<typeof urlForImage>[0])
-        .width(1200)
-        .quality(75)
-        .url()
+    ? aspectRatio
+      ? urlForImage(image as Parameters<typeof urlForImage>[0])
+          .width(COVER_CROP_WIDTH)
+          .height(Math.round(COVER_CROP_WIDTH * aspectRatio[1] / aspectRatio[0]))
+          .fit("crop")
+          .quality(75)
+          .url()
+      : urlForImage(image as Parameters<typeof urlForImage>[0])
+          .width(1200)
+          .quality(75)
+          .url()
     : null;
 
   const bgClass =
