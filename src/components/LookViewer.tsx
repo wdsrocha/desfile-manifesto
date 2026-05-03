@@ -90,22 +90,19 @@ export function LookViewer({ look, onClose }: LookViewerProps) {
               <div className="flex flex-col gap-5 text-sm sm:text-base">
                 {look.model?.name && (
                   <div>
-                    <div className="editorial-eyebrow mb-1">Modelo</div>
-                    <div className="flex items-center gap-1.5">
-                      <div className="text-ink leading-snug">
+                    <div className="editorial-eyebrow">Modelo</div>
+                    {look.model.instagram ? (
+                      <a
+                        href={`https://instagram.com/${look.model.instagram.replace(/^@/, "")}`}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="underline underline-offset-2 decoration-ink/30 hover:decoration-ink/60 transition-colors"
+                      >
                         {look.model.name}
-                      </div>
-                      {look.model.instagram && (
-                        <a
-                          href={`https://instagram.com/${look.model.instagram.replace(/^@/, "")}`}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          className="inline-block text-[13px] text-ink/60 hover:text-ink transition-colors"
-                        >
-                          {look.model.instagram}
-                        </a>
-                      )}
-                    </div>
+                      </a>
+                    ) : (
+                      <span className="text-ink leading-snug">{look.model.name}</span>
+                    )}
                   </div>
                 )}
 
