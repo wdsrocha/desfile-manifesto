@@ -80,13 +80,6 @@ export type PersonReference = {
   [internalGroqTypeReferenceTo]?: "person";
 };
 
-export type PieceTypeReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "pieceType";
-};
-
 export type BrandReference = {
   _ref: string;
   _type: "reference";
@@ -116,7 +109,7 @@ export type Look = {
     instagram?: string;
   };
   pieces?: Array<{
-    slot?: PieceTypeReference;
+    slot?: string;
     brands?: Array<
       {
         _key: string;
@@ -125,15 +118,6 @@ export type Look = {
     _type: "piece";
     _key: string;
   }>;
-};
-
-export type PieceType = {
-  _id: string;
-  _type: "pieceType";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  name?: string;
 };
 
 export type Person = {
@@ -300,10 +284,8 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | PersonReference
-  | PieceTypeReference
   | BrandReference
   | Look
-  | PieceType
   | Person
   | NextEvent
   | Event
@@ -375,7 +357,7 @@ export type NextEventQueryResult = {
 
 // Source: src/sanity/queries/looks.ts
 // Variable: allLooksQuery
-// Query: *[_type == "look"] | order(orderRank asc) {    _id,    images[]{      hotspot,      crop,      asset->{        _id,        _type,        metadata {          dimensions {            width,            height,            aspectRatio          }        }      },      alt,      photographer->{        _id,        name,        stageName,        instagram      }    },    model {      name,      instagram    },    pieces[]{      _key,      slot->{ _id, name },      brands[]->{ _id, name, instagram }    }  }
+// Query: *[_type == "look"] | order(orderRank asc) {    _id,    images[]{      hotspot,      crop,      asset->{        _id,        _type,        metadata {          dimensions {            width,            height,            aspectRatio          },          lqip        }      },      alt,      photographer->{        _id,        name,        stageName,        instagram      }    },    model {      name,      instagram    },    pieces[]{      _key,      slot,      brands[]->{ _id, name, instagram }    }  }
 export type AllLooksQueryResult = Array<{
   _id: string;
   images: Array<{
@@ -407,10 +389,7 @@ export type AllLooksQueryResult = Array<{
   } | null;
   pieces: Array<{
     _key: string;
-    slot: {
-      _id: string;
-      name: string | null;
-    } | null;
+    slot: string | null;
     brands: Array<{
       _id: string;
       name: string | null;
@@ -465,7 +444,7 @@ declare module "@sanity/client" {
     '\n  *[_type == "creditGroup"] | order(title asc) {\n    _id,\n    title,\n    entries[] {\n      _key,\n      name,\n      instagram\n    }\n  }\n': AllCreditGroupsQueryResult;
     '\n  *[_type == "event"] | order(_createdAt asc) [0] {\n    name,\n    edition,\n    humanDate,\n    displayDate,\n    isoDate,\n    location,\n    concept,\n    intro,\n    longDescription\n  }\n': CurrentEventQueryResult;
     '\n  *[_type == "nextEvent"] | order(_createdAt asc) [0] {\n    edition,\n    date,\n    location\n  }\n': NextEventQueryResult;
-    '\n  *[_type == "look"] | order(orderRank asc) {\n    _id,\n    images[]{\n      hotspot,\n      crop,\n      asset->{\n        _id,\n        _type,\n        metadata {\n          dimensions {\n            width,\n            height,\n            aspectRatio\n          },\n          lqip\n        }\n      },\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    pieces[]{\n      _key,\n      slot->{ _id, name },\n      brands[]->{ _id, name, instagram }\n    }\n  }\n': AllLooksQueryResult;
+    '\n  *[_type == "look"] | order(orderRank asc) {\n    _id,\n    images[]{\n      hotspot,\n      crop,\n      asset->{\n        _id,\n        _type,\n        metadata {\n          dimensions {\n            width,\n            height,\n            aspectRatio\n          },\n          lqip\n        }\n      },\n      alt,\n      photographer->{\n        _id,\n        name,\n        stageName,\n        instagram\n      }\n    },\n    model {\n      name,\n      instagram\n    },\n    pieces[]{\n      _key,\n      slot,\n      brands[]->{ _id, name, instagram }\n    }\n  }\n': AllLooksQueryResult;
     '\n  *[_type == "person" && role == "model"] | order(stageName asc) {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image {\n      ...,\n      "lqip": asset->metadata.lqip\n    }\n  }\n': AllModelsQueryResult;
     '\n  *[_type == "person" && role == "production"] | order(stageName asc) [0] {\n    _id,\n    name,\n    stageName,\n    instagram,\n    image {\n      ...,\n      "lqip": asset->metadata.lqip\n    }\n  }\n': ExecutiveProducerQueryResult;
   }
