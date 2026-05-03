@@ -1,7 +1,7 @@
 import { defineQuery } from 'next-sanity'
 
 export const allModelsQuery = defineQuery(`
-  *[_type == "person" && role == "model"] | order(order asc, stageName asc) {
+  *[_type == "person" && role == "model"] | order(stageName asc) {
     _id,
     name,
     stageName,
@@ -11,7 +11,7 @@ export const allModelsQuery = defineQuery(`
 `)
 
 export const executiveProducerQuery = defineQuery(`
-  *[_type == "person" && role == "production"] | order(order asc) [0] {
+  *[_type == "person" && role == "production"] | order(stageName asc) [0] {
     _id,
     name,
     stageName,
