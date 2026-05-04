@@ -17,6 +17,7 @@ interface LookImageProps {
   objectFit?: "cover" | "contain";
   aspectRatio?: [number, number];
   blurDataURL?: string;
+  hotspot?: { x?: number | null; y?: number | null } | null;
 }
 
 export function LookImage({
@@ -28,6 +29,7 @@ export function LookImage({
   objectFit = "cover",
   aspectRatio,
   blurDataURL,
+  hotspot,
 }: LookImageProps) {
   const hasImage = image && (image as { asset?: unknown }).asset;
   const imageUrl = hasImage
@@ -61,6 +63,13 @@ export function LookImage({
           placeholder={blurDataURL ? "blur" : "empty"}
           blurDataURL={blurDataURL}
           className={objectFit === "contain" ? "object-contain" : "object-cover"}
+          style={
+            objectFit === "cover" && hotspot
+              ? {
+                  objectPosition: `${(hotspot.x ?? 0.5) * 100}% ${(hotspot.y ?? 0.5) * 100}%`,
+                }
+              : undefined
+          }
         />
       )}
     </div>
