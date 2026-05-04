@@ -50,15 +50,13 @@ export function LookCarousel({ images }: LookCarouselProps) {
   const multiple = images.length > 1;
 
   return (
-    <div className="relative aspect-[9/16] w-full bg-ink sm:w-auto sm:h-[88vh] sm:flex-shrink-0 sm:aspect-[9/16] group/carousel">
+    <div className="relative aspect-[3/4] w-full bg-ink sm:w-auto sm:h-[88vh] sm:flex-shrink-0 sm:aspect-[9/16] group/carousel">
       <div ref={emblaRef} className="overflow-hidden h-full">
         <div className="flex h-full">
           {images.map((img, i) => {
             const imageRatio = img.asset?.metadata?.dimensions?.aspectRatio;
             const fit: "cover" | "contain" =
-              typeof imageRatio === "number" &&
-              imageRatio > 9 / 16 &&
-              imageRatio < 1
+              typeof imageRatio === "number" && imageRatio < 3 / 4
                 ? "cover"
                 : "contain";
             return (
