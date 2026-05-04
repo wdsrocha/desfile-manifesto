@@ -17,7 +17,7 @@ interface LookImageProps {
   objectFit?: "cover" | "contain";
   aspectRatio?: [number, number];
   blurDataURL?: string;
-  hotspot?: { x?: number | null; y?: number | null } | null;
+  coverAnchor?: string;
 }
 
 export function LookImage({
@@ -29,21 +29,21 @@ export function LookImage({
   objectFit = "cover",
   aspectRatio,
   blurDataURL,
-  hotspot,
+  coverAnchor,
 }: LookImageProps) {
   const hasImage = image && (image as { asset?: unknown }).asset;
   const imageUrl = hasImage
     ? aspectRatio
       ? urlForImage(image as Parameters<typeof urlForImage>[0])
-          .width(COVER_CROP_WIDTH)
-          .height(Math.round(COVER_CROP_WIDTH * aspectRatio[1] / aspectRatio[0]))
-          .fit("crop")
-          .quality(IMAGE_QUALITY)
-          .url()
+        .width(COVER_CROP_WIDTH)
+        .height(Math.round(COVER_CROP_WIDTH * aspectRatio[1] / aspectRatio[0]))
+        .fit("crop")
+        .quality(IMAGE_QUALITY)
+        .url()
       : urlForImage(image as Parameters<typeof urlForImage>[0])
-          .width(1200)
-          .quality(IMAGE_QUALITY)
-          .url()
+        .width(1200)
+        .quality(IMAGE_QUALITY)
+        .url()
     : null;
 
   const bgClass =
@@ -64,10 +64,8 @@ export function LookImage({
           blurDataURL={blurDataURL}
           className={objectFit === "contain" ? "object-contain" : "object-cover"}
           style={
-            objectFit === "cover" && hotspot
-              ? {
-                  objectPosition: `${(hotspot.x ?? 0.5) * 100}% ${(hotspot.y ?? 0.5) * 100}%`,
-                }
+            objectFit === "cover" && coverAnchor
+              ? { objectPosition: coverAnchor }
               : undefined
           }
         />

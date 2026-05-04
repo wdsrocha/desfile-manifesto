@@ -59,6 +59,21 @@ export function LookCarousel({ images }: LookCarouselProps) {
               typeof imageRatio === "number" && imageRatio < 3 / 4
                 ? "cover"
                 : "contain";
+
+            // Center the hotspot in the mobile 3:4 container.
+            // r = container_height / rendered_height = imageRatio / containerAspect
+            // p = clamp((hotspot_y - r/2) / (1 - r), 0, 1)
+            const coverAnchor = (() => {
+              if (fit !== "cover") return undefined;
+              const hotspot = img.hotspot;
+              if (!hotspot || typeof imageRatio !== "number") return undefined;
+              const r = imageRatio / (3 / 4);
+              if (r >= 1) return undefined;
+              const x = (hotspot.x ?? 0.5) * 100;
+              const y = Math.max(0, Math.min(1, ((hotspot.y ?? 0.5) - r / 2) / (1 - r))) * 100;
+              return `${x}% ${y}%`;
+            })();
+
             return (
               <div
                 key={i}
@@ -71,7 +86,7 @@ export function LookCarousel({ images }: LookCarouselProps) {
                   sizes="(min-width: 640px) 50vh, 100vw"
                   className="h-full w-full"
                   objectFit={fit}
-                  hotspot={fit === "cover" ? img.hotspot : undefined}
+                  coverAnchor={coverAnchor}
                   blurDataURL={img.asset?.metadata?.lqip ?? undefined}
                 />
                 <PhotographerCredit instagram={img.photographer?.instagram} />
