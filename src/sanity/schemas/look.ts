@@ -1,6 +1,18 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import type { ValidationContext } from 'sanity'
 import { ImageIcon } from '@sanity/icons'
 import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
+
+async function isUniqueModelName(name: string, context: ValidationContext) {
+  const { document, getClient } = context
+  const client = getClient({ apiVersion: '2024-01-01' })
+  const id = document?._id?.replace(/^drafts\./, '')
+  const count: number = await client.fetch(
+    `count(*[_type == "look" && model.name == $name && !(_id in [$id, "drafts." + $id])])`,
+    { name, id },
+  )
+  return count === 0 || 'Já existe um look com esse nome de modelo.'
+}
 
 export const look = defineType({
   name: 'look',
@@ -9,6 +21,16 @@ export const look = defineType({
   icon: ImageIcon,
   fields: [
     orderRankField({ type: 'look', hidden: true }),
+    defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      options: {
+        source: (doc) => (doc as { model?: { name?: string } }).model?.name ?? '',
+        maxLength: 60,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'images',
       title: 'Imagens',
@@ -45,7 +67,16 @@ export const look = defineType({
       title: 'Modelo',
       type: 'object',
       fields: [
-        defineField({ name: 'name', title: 'Nome', type: 'string' }),
+        defineField({
+          name: 'name',
+          title: 'Nome',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.required().custom(
+              async (name, context) =>
+                name ? isUniqueModelName(name, context) : true,
+            ),
+        }),
         defineField({
           name: 'instagram',
           title: 'Instagram',

@@ -26,6 +26,7 @@ export const allLooksQuery = defineQuery(`
         instagram
       }
     },
+    'slug': slug.current,
     model {
       name,
       instagram
