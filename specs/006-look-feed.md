@@ -25,7 +25,8 @@ A migração é **incremental e sem big-bang**: cada fase é shippável e manté
 | Identificador no schema       | Novo campo `slug: slug` no `look`, validation required, auto-gerado no Studio com botão "Gerar"                            |
 | Roteamento                    | App Router. `app/looks/[slug]/page.tsx` (canônica) + `app/@modal/(.)looks/[slug]/page.tsx` (intercepting + parallel route) |
 | Layout do feed                | Vertical CSS scroll-snap (`scroll-snap-type: y mandatory`), cada look ocupa `100dvh` com `scroll-snap-align: start`        |
-| Layout dentro do look         | Carrossel horizontal embla (reusa `LookCarousel` atual)                                                                    |
+| Layout dentro do look         | Carrossel horizontal embla (reusa `LookCarousel` atual). Carrossel ocupa `h-[100dvh] w-full` com `object-cover` — sem painel de metadata abaixo |
+| Metadata no feed              | Overlay no rodapé da imagem com gradiente escuro. Nome do modelo sempre visível. Peças acessíveis via chip "Ver peças" → sheet slide-up (~50 % do viewport). Fotógrafo permanece por-imagem dentro do `LookCarousel` (sem mudança) |
 | Renderização de looks         | Render de todos os looks no DOM (dataset pequeno, < 50). Windowing fica como Fase 5 opcional                                |
 | Sync de URL ao rolar          | `IntersectionObserver` detecta look ativo → `window.history.replaceState` (sem reload, sem novo entry no stack)            |
 | Voltar para a home            | Comportamento nativo do navegador/iOS. Sem listener manual de `popstate`. Scroll restoration default do Next.js            |
@@ -87,12 +88,22 @@ user scrolla
 **Componente unificado:**
 ```
 LookFeed (Client Component)
-  props: looks: AllLooksQueryResult, startSlug: string, mode: "overlay" | "standalone"
+  props: looks: AllLooksQueryResult, startSlug: string, mode: "overlay" | "page"
   - efeito on-mount: scroll para o slug inicial (scrollIntoView "instant")
-  - render: <article> por look com <LookCarousel images={...}>
-  - render: metadata abaixo do carrossel (modelo, peças, fotógrafo) — layout mobile-first
-  - mode "overlay": wrap com backdrop + botão X
-  - mode "standalone": header fino com link "Voltar"
+  - render: <article data-slug> por look, cada um h-[100dvh] snap-start
+  - mode "overlay": fixed inset-0 z-50 + botão X (router.push "/")
+  - mode "page": botão flutuante "← Voltar" (Link href="/")
+
+LookFeedItem (Client Component)
+  - carrossel full-bleed: h-[100dvh] w-full, imagens com object-cover
+  - overlay no rodapé: gradiente escuro → nome do modelo + chip "Ver peças"
+  - chip "Ver peças": renderiza LookPiecesSheet (condicional — só se look.pieces.length > 0)
+  - fotógrafo: permanece por-imagem dentro do LookCarousel (sem mudança)
+
+LookPiecesSheet (Client Component)
+  - sheet slide-up (~50 % do viewport), rola internamente se a lista for longa
+  - fecha com tap no backdrop, botão X interno ou Escape
+  - role="dialog" aria-modal="true", focus trap
 ```
 
 ---
@@ -317,10 +328,11 @@ Webhook de revalidação (PRD 001) já cobre: ao publicar look com novo slug, `/
 **Arquivos a criar:**
 - `src/components/LookFeed.tsx` — Client Component. Props: `looks: AllLooksQueryResult`, `startSlug: string`, `mode: "overlay" | "page"`.
   - On-mount: encontrar `<article>` do `startSlug`, `scrollIntoView({ behavior: "instant" })`.
-  - `IntersectionObserver` com `rootMargin: "-50% 0px"` em cada `<article>`. Quando intersecta, set `activeSlug` (ref, não state) e `window.history.replaceState(null, "", \`/looks/\${slug}\`)`.
-  - Render: `<article data-slug={slug}>` por look. Cada um: `min-h-[100dvh] snap-start flex flex-col`. Carrossel ocupa região superior; metadata abaixo.
-  - O container raiz: `snap-y snap-mandatory` (ou no `<main>` ancestral; ver convenções).
-- `src/components/LookFeedItem.tsx` — Client Component. Renderiza um look (carrossel + metadata). Recebe `look` e `priority` (boolean — primeira imagem do look-âncora marca priority).
+  - `IntersectionObserver` com `rootMargin: "-50% 0px -50% 0px"` em cada `<article>`. Quando intersecta, set `activeSlug` (ref, não state) e `window.history.replaceState(null, "", \`/looks/\${slug}\`)` debounced ~80ms.
+  - Render: `<article data-slug={slug} className="h-[100dvh] snap-start">` por look.
+  - Container raiz: `snap-y snap-mandatory h-[100dvh] overflow-y-scroll`.
+- `src/components/LookFeedItem.tsx` — Client Component. Layout full-bleed: carrossel ocupa `h-[100dvh] w-full` (imagens com `object-cover`). Overlay no rodapé com gradiente escuro: nome do modelo + chip "Ver peças" (condicional). Sem painel de metadata abaixo — zero scroll interno.
+- `src/components/LookPiecesSheet.tsx` — Client Component. Sheet slide-up (~50 % do viewport) com lista completa de peças. Abre via chip "Ver peças" em `LookFeedItem`. Fecha com tap no backdrop, botão X ou Escape. `role="dialog"` `aria-modal="true"`, focus trap via `inert` no restante do DOM.
 
 **Arquivos a modificar:**
 - `src/app/looks/[slug]/page.tsx` — buscar `allLooks` em vez de `lookBySlug`. Renderizar `<LookFeed looks={allLooks} startSlug={params.slug} mode="page" />`.
@@ -344,25 +356,32 @@ Webhook de revalidação (PRD 001) já cobre: ao publicar look com novo slug, `/
 **Migração de conteúdo:** nenhuma.
 
 **Critérios de aceitação:**
+- [ ] Cada look ocupa exatamente `100dvh` — sem scroll interno, sem painel abaixo.
 - [ ] Snap vertical funcional em mobile e desktop.
 - [ ] URL sincroniza com o look ativo via `replaceState` (sem novas entradas no histórico).
 - [ ] Voltar do navegador retorna à home, não ao look anterior do feed.
-- [ ] Carrossel horizontal segue funcional dentro de cada look.
+- [ ] Carrossel horizontal segue funcional dentro de cada look (imagens com `object-cover`).
+- [ ] Nome do modelo visível no overlay sem nenhum tap.
+- [ ] Chip "Ver peças" visível quando `look.pieces` não está vazio; oculto caso contrário.
+- [ ] Sheet abre com lista completa de peças; fecha via backdrop, botão X ou Escape.
 - [ ] iOS swipe-back funciona normalmente.
 - [ ] Sem regressão de LCP na home.
 
 **Commits sugeridos:**
-1. `feat(looks): add LookFeed component with vertical snap scroll`
-2. `feat(looks): sync URL to active look via replaceState`
-3. `refactor(looks): switch routes to render full feed`
+1. `feat(looks): add full-bleed LookFeedItem with metadata overlay`
+2. `feat(looks): add LookPiecesSheet slide-up panel`
+3. `feat(looks): add LookFeed with vertical snap scroll and URL sync`
+4. `refactor(looks): switch routes to render full feed`
 
 **Notas para o agente:**
 - ANTES de codar: ler `node_modules/next/dist/docs/.../scroll-restoration.mdx` ou similar. Validar interação com intercepting route.
 - `replaceState` deve ser **debounced** (~80ms) e idempotente (não chamar se URL já bate).
-- `IntersectionObserver` thresholds: usar `[0.5]` ou `rootMargin: "-50% 0px -50% 0px"` para detectar o look "central". Documentar a escolha em comentário curto se a heurística não for óbvia.
-- Carrossel embla precisa de `dragFree: false` e `axis: "x"` (default). Snap vertical é CSS puro; embla cuida do horizontal.
-- Não usar `position: sticky` para o painel de metadata — quebra snap em iOS.
-- O painel de metadata pode ficar abaixo do carrossel (mobile-style). Em desktop, considerar split (carrossel à esquerda, meta à direita) DENTRO do mesmo `100dvh`. Decisão visual fica para a fase 4 se for divergência.
+- `IntersectionObserver` thresholds: usar `rootMargin: "-50% 0px -50% 0px"` para detectar o look "central". Documentar a escolha em comentário curto.
+- Carrossel embla: `dragFree: false`, `axis: "x"` (default). Para modo full-bleed, adicionar prop `fill?: boolean` ao `LookCarousel` que substitui as classes de tamanho por `h-full w-full`. Imagens dentro usam `objectFit="cover"`.
+- Não usar `position: sticky` em nenhuma parte do LookFeedItem — quebra snap em iOS.
+- **Full-bleed**: cada `<article>` é `h-[100dvh] snap-start`, sem margem ou padding. O overlay do rodapé (nome + chip) é `absolute bottom-0 left-0 right-0` com gradiente `from-transparent to-black/60`.
+- **LookPiecesSheet**: não usar `<dialog>` HTML nativo — conflita com scroll-snap em iOS Safari. Usar `<div role="dialog">`. Focus trap via `inert` no restante do DOM. Body overflow-hidden enquanto sheet aberta (evitar scroll do feed por baixo).
+- **Chip "Ver peças"**: renderizar apenas se `(look.pieces ?? []).filter(p => (p.brands ?? []).length > 0).length > 0` — mesma lógica de `LookPieces`.
 
 ---
 
@@ -507,9 +526,10 @@ Sem novos webhooks. CORS sem mudanças.
 - **Opção A (escolhida)**: render todos. Escolhida porque: dataset pequeno (< 50), DOM pesa pouco, snap-CSS funciona perfeito sem JS de mount/unmount.
 - **Opção B**: windowing desde o dia 1. Rejeitada porque: complexidade extra (placeholder height, IntersectionObserver para mount, edge cases de scroll), valor incerto. Reservada para Fase 5 condicional.
 
-**Layout do painel de metadata**
-- **Opção A (escolhida)**: empilhado abaixo do carrossel dentro do mesmo `100dvh`. Escolhida porque: igual a Instagram, scroll-snap funciona limpo.
-- **Opção B**: drawer lateral em desktop (como o modal atual). Não rejeitada definitivamente — pode evoluir na Fase 4 sem afetar a arquitetura.
+**Layout de metadata no feed (decisão revisada na Fase 3)**
+- **Opção A — painel abaixo (descartada)**: metadata empilhada abaixo do carrossel. Criava dupla área de scroll (painel interno vs snap do feed) e UX confusa — o próximo look não era imediatamente visível.
+- **Opção B — collapse inline estilo Instagram caption (descartada)**: texto recolhido "ver mais" que expande in-place. Ambíguo visualmente quando há 4+ marcas (o texto expandido cobre boa parte da foto).
+- **Opção C (escolhida) — overlay no rodapé + sheet "Ver peças"**: carrossel full-bleed `h-[100dvh]`; nome do modelo sempre visível em overlay com gradiente; peças atrás de chip "Ver peças" → sheet slide-up (~50 % do viewport). Escolhida porque: zero scroll interno (snap limpo), foto sempre visível, sheet dá espaço ilimitado para marcas sem cobrir a imagem no estado padrão. Fotógrafo permanece por-imagem dentro do LookCarousel.
 
 **Intercepting route vs modal state-driven com `pushState`**
 - **Opção A (escolhida)**: intercepting route. Escolhida porque: padrão idiomático do App Router para esse exato caso; deep-link, share, refresh funcionam sem código extra.
