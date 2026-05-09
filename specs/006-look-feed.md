@@ -99,7 +99,7 @@ LookFeed (Client Component)
 
 ## 4. Convenções
 
-- Slug: `{kebab-case do model.name}` + `-{6-char random}` se colisão. Gerado no Studio, persistido no documento. Nunca derivar em runtime.
+- Slug: `kebab-case do model.name`. Gerado no Studio, persistido no documento. Nunca derivar em runtime. `model.name` é único por design — dataset pequeno, fora do escopo esperado de crescimento.
 - Não criar `LookFeedOverlay` e `LookFeedStandalone` como dois componentes separados. Um único `LookFeed` com prop `mode`. A diferença visual é ~30 linhas de wrapper.
 - A página intercepted (`@modal/(.)looks/[slug]/page.tsx`) e a canônica (`app/looks/[slug]/page.tsx`) compartilham a mesma data fetch e o mesmo `<LookFeed>`. Se divergir, é bug.
 - Não usar `<dialog>` HTML nativo para o overlay — conflita com scroll-snap em iOS Safari. Usar `<div role="dialog">` (igual ao `LookViewer` atual).
@@ -173,7 +173,7 @@ Webhook de revalidação (PRD 001) já cobre: ao publicar look com novo slug, `/
 **Pré-requisitos**: nenhum.
 
 **Arquivos a criar:**
-- `scripts/backfill-look-slugs.ts` — varre todos os looks; se sem slug, gera `kebab(model.name) + "-" + nanoid(6)` (fallback `look-{nanoid}` se sem modelo); patch via `client.patch().setIfMissing({ slug })`. Idempotente. Suporta `--dry-run`.
+- `scripts/backfill-look-slugs.ts` — varre todos os looks; se sem slug, gera `kebab(model.name)`; patch via `client.patch().setIfMissing({ slug })`. Looks sem `model.name` são listados como aviso e ignorados (editor deve preencher no Studio antes de rodar novamente). Idempotente. Suporta `--dry-run`.
 
 **Arquivos a modificar:**
 - `src/sanity/schemas/look.ts` — adicionar `defineField({ name: 'slug', type: 'slug', validation: Rule => Rule.required(), options: { source: doc => doc.model?.name ?? 'look', maxLength: 60, isUnique: isUniqueSlug } })`. Implementar `isUniqueSlug` usando `client.fetch` (ver docs Sanity).
@@ -490,7 +490,7 @@ Sem novos webhooks. CORS sem mudanças.
 - **Opção C**: criar rota separada `/feed/[slug]` para o feed; `/looks/[slug]` continua single-look. Rejeitada porque: duas URLs para o mesmo conteúdo confunde SEO e share.
 
 **Identificador na URL**
-- **Opção A (escolhida)**: `slug` persistido no schema, gerado a partir do nome do modelo + sufixo random. Escolhida porque: legível, único, estável, indexável.
+- **Opção A (escolhida)**: `slug` persistido no schema, gerado a partir do nome do modelo (`kebab(model.name)`). Escolhida porque: legível, único, estável, indexável. `model.name` é obrigatório e único no Studio — dataset pequeno, fora do escopo esperado de crescimento. Sem sufixo aleatório.
 - **Opção B**: `_id` Sanity (UUID). Rejeitada porque: feio, sem valor SEO, e a UUID muda entre dataset draft/publicado em alguns fluxos.
 - **Opção C**: `lookNumber` sequencial (`/looks/05`). Rejeitada porque: não existe campo no schema; reordenar via drag-to-reorder mudaria URLs.
 
