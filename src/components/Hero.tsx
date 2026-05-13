@@ -31,20 +31,29 @@ export function Hero({ event }: HeroProps) {
 
           <nav
             aria-label="Seções principais"
-            className="flex flex-col sm:flex-row sm:flex-wrap gap-y-3 sm:gap-x-6 sm:gap-y-2 pt-2 text-[11px] uppercase tracking-editorial"
+            className="flex flex-wrap items-center gap-y-2 pt-2 text-[11px] uppercase tracking-editorial"
           >
+            <a
+              href="#looks"
+              className="text-cream/70 hover:text-cream transition-colors"
+            >
+              Looks
+            </a>
+            <span aria-hidden className="mx-4 text-cream/40">·</span>
             <a
               href="#sobre"
               className="text-cream/70 hover:text-cream transition-colors"
             >
-              Sobre o evento
+              Sobre
             </a>
+            <span aria-hidden className="mx-4 text-cream/40">·</span>
             <a
               href="#marcas"
               className="text-cream/70 hover:text-cream transition-colors"
             >
-              Marcas & Criativos
+              Marcas e Criativos
             </a>
+            <span aria-hidden className="mx-4 text-cream/40">·</span>
             <a
               href="#creditos"
               className="text-cream/70 hover:text-cream transition-colors"
