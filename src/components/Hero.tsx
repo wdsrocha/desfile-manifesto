@@ -29,12 +29,6 @@ export function Hero({ event }: HeroProps) {
             <span className="text-cream/40">.</span>
           </h1>
 
-          {event?.concept && (
-            <p className="font-serif text-xl sm:text-2xl md:text-3xl leading-snug text-cream/90 max-w-2xl text-balance">
-              {event.concept}
-            </p>
-          )}
-
           <nav
             aria-label="Seções principais"
             className="flex flex-col sm:flex-row sm:flex-wrap gap-y-3 sm:gap-x-6 sm:gap-y-2 pt-2 text-[11px] uppercase tracking-editorial"
