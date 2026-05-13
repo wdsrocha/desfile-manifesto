@@ -14,8 +14,8 @@ export function Hero({ event }: HeroProps) {
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8 py-24 sm:py-28 md:py-32">
         <div className="flex flex-col gap-6 sm:gap-8 max-w-3xl">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] uppercase tracking-editorial text-cream/70">
-            {event?.edition && <span>{event.edition}</span>}
-            {event?.edition && event?.location && <span aria-hidden>·</span>}
+            <span>TRAMA</span>
+            {event?.location && <span aria-hidden>·</span>}
             {event?.location && <span>{event.location}</span>}
           </div>
 
