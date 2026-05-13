@@ -51,7 +51,7 @@ export function Hero({ event }: HeroProps) {
               href="#marcas"
               className="text-cream/70 hover:text-cream transition-colors"
             >
-              Marcas e Criativos
+              Marcas & Criativos
             </a>
             <span aria-hidden className="mx-4 text-cream/40">·</span>
             <a
